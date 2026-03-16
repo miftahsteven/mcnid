@@ -80,7 +80,7 @@ export default function SettingsPage() {
                   <p className="text-xs text-gray-400 mb-1.5">{field.desc}</p>
                   {field.textarea ? (
                     <textarea
-                      value={(form as Record<string, string>)[field.key] || ''}
+                      value={(form as unknown as Record<string, string>)[field.key] || ''}
                       onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                       rows={3}
                       className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1a4731] resize-none"
@@ -88,7 +88,7 @@ export default function SettingsPage() {
                   ) : (
                     <input
                       type="text"
-                      value={(form as Record<string, string>)[field.key] || ''}
+                      value={(form as unknown as Record<string, string>)[field.key] || ''}
                       onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
                       className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1a4731]"
                     />
