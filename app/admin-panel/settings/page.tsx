@@ -5,10 +5,10 @@ import { Save, Globe, Mail, Shield, Search, Bell } from "lucide-react";
 export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState({
-    siteName: "MCN.ID",
+    siteName: "MCNID.NET",
     tagline: "Media Islam Nasional Modern",
-    siteUrl: "https://mcn.id",
-    adminEmail: "admin@mcn.id",
+    siteUrl: "https://mcnid.net",
+    adminEmail: "admin@mcnid.net",
     postsPerPage: "12",
     allowComments: true,
     requireModeration: true,
@@ -37,7 +37,7 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-xl font-bold text-gray-900">Pengaturan</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            Konfigurasi website MCN.ID
+            Konfigurasi website MCNID.NET
           </p>
         </div>
         <button

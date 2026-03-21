@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
-import AdminSidebar from '@/components/admin/AdminSidebar';
-import AdminTopbar from '@/components/admin/AdminTopbar';
+import { cookies } from 'next/headers';
+import * as jose from 'jose';
+import AdminShell from '@/components/admin/AdminShell';
+import { UserProvider, AdminUser } from '@/components/admin/UserContext';
 
 export const metadata: Metadata = {
   title: {
@@ -10,16 +12,22 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('admin_token')?.value;
+  let user: AdminUser | null = null;
+  
+  if (token) {
+    try {
+      user = jose.decodeJwt(token) as AdminUser;
+    } catch (e) {}
+  }
+
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f0f0f1] font-sans">
-      <AdminSidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <AdminTopbar />
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <UserProvider user={user}>
+      <AdminShell>
+        {children}
+      </AdminShell>
+    </UserProvider>
   );
 }

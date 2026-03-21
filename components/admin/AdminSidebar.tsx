@@ -1,83 +1,116 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Newspaper, Video, GraduationCap, Heart,
-  Users, Settings, ChevronDown, ChevronRight, Globe,
-  FileText, BarChart2, Image, Tag, MessageSquare, X, Menu
-} from 'lucide-react';
+  LayoutDashboard,
+  Newspaper,
+  Video,
+  GraduationCap,
+  Heart,
+  Users,
+  Settings,
+  ChevronDown,
+  ChevronRight,
+  Globe,
+  FileText,
+  BarChart2,
+  Image,
+  Tag,
+  MessageSquare,
+  X,
+  Menu,
+} from "lucide-react";
+import { useAdminUser } from "./UserContext";
 
-const navItems = [
+type NavItem = {
+  label: string;
+  href?: string;
+  icon: any;
+  children?: { label: string; href: string }[];
+  allowedRoles?: string[];
+};
+
+const navItems: NavItem[] = [
   {
-    label: 'Dashboard',
-    href: '/admin-panel',
+    label: "Dashboard",
+    href: "/admin-panel",
     icon: LayoutDashboard,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN", "EDITOR", "MODERATOR"],
   },
   {
-    label: 'Posts',
+    label: "Posts",
     icon: Newspaper,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN", "EDITOR", "MODERATOR"],
     children: [
-      { label: 'Semua Berita', href: '/admin-panel/posts' },
-      { label: 'Tambah Baru', href: '/admin-panel/posts/new' },
-      { label: 'Kategori', href: '/admin-panel/posts/categories' },
-      { label: 'Opini', href: '/admin-panel/posts/opinions' },
+      { label: "Semua Berita", href: "/admin-panel/posts" },
+      { label: "Tambah Baru", href: "/admin-panel/posts/new" },
+      // { label: 'Kategori', href: '/admin-panel/posts/categories' },
+      // { label: 'Opini', href: '/admin-panel/posts/opinions' },
     ],
   },
   {
-    label: 'MCN Play',
+    label: "MCN Play",
     icon: Video,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN", "EDITOR", "MODERATOR"],
     children: [
-      { label: 'Semua Video', href: '/admin-panel/videos' },
-      { label: 'Tambah Video', href: '/admin-panel/videos/new' },
-      { label: 'Kategori', href: '/admin-panel/videos/categories' },
+      { label: "Semua Video", href: "/admin-panel/videos" },
+      { label: "Tambah Video", href: "/admin-panel/videos/new" },
+      // { label: "Kategori", href: "/admin-panel/videos/categories" },
     ],
   },
   {
-    label: 'MCN Academy',
+    label: "MCN Academy",
     icon: GraduationCap,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN", "EDITOR", "MODERATOR"],
     children: [
-      { label: 'Semua Kursus', href: '/admin-panel/courses' },
-      { label: 'Tambah Kursus', href: '/admin-panel/courses/new' },
-      { label: 'Siswa', href: '/admin-panel/courses/students' },
+      { label: "Semua Kursus", href: "/admin-panel/courses" },
+      { label: "Tambah Kursus", href: "/admin-panel/courses/new" },
+      { label: "Siswa", href: "/admin-panel/courses/students" },
     ],
   },
   {
-    label: 'ZIS Network',
+    label: "ZIS Network",
     icon: Heart,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN"],
     children: [
-      { label: 'Program', href: '/admin-panel/zis' },
-      { label: 'Tambah Program', href: '/admin-panel/zis/new' },
-      { label: 'Donatur', href: '/admin-panel/zis/donors' },
+      { label: "Program", href: "/admin-panel/zis" },
+      { label: "Tambah Program", href: "/admin-panel/zis/new" },
+      { label: "Donatur", href: "/admin-panel/zis/donors" },
     ],
   },
   {
-    label: 'Komentar',
-    href: '/admin-panel/comments',
+    label: "Komentar",
+    href: "/admin-panel/comments",
     icon: MessageSquare,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    label: 'Media',
-    href: '/admin-panel/media',
+    label: "Media",
+    href: "/admin-panel/media",
     icon: Image,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    label: 'Pengguna',
-    href: '/admin-panel/users',
+    label: "Pengguna",
+    href: "/admin-panel/users",
     icon: Users,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    label: 'Statistik',
-    href: '/admin-panel/analytics',
+    label: "Statistik",
+    href: "/admin-panel/analytics",
     icon: BarChart2,
+    allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    label: 'Pengaturan',
+    label: "Pengaturan",
     icon: Settings,
+    allowedRoles: ["SUPER_ADMIN"],
     children: [
-      { label: 'Umum', href: '/admin-panel/settings' },
-      { label: 'SEO', href: '/admin-panel/settings/seo' },
-      { label: 'Keamanan', href: '/admin-panel/settings/security' },
+      { label: "Umum", href: "/admin-panel/settings" },
+      { label: "SEO", href: "/admin-panel/settings/seo" },
+      { label: "Keamanan", href: "/admin-panel/settings/security" },
     ],
   },
 ];
@@ -86,10 +119,11 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState<string[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const user = useAdminUser();
 
   const toggleGroup = (label: string) => {
     setCollapsed((prev) =>
-      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label],
     );
   };
 
@@ -97,19 +131,25 @@ export default function AdminSidebar() {
   const isGroupActive = (children: { href: string }[]) =>
     children.some((c) => pathname.startsWith(c.href));
 
+  // Filter items based on user role
+  const userRole = user?.role || "EDITOR"; // Default fallback
+  const filteredNavItems = navItems.filter(
+    (item) => !item.allowedRoles || item.allowedRoles.includes(userRole),
+  );
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo / Site header */}
       <div className="px-4 py-4 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2d6b4a] to-[#4a2c82] flex items-center justify-center">
-            <span className="text-white font-bold text-sm font-serif">M</span>
-          </div>
-          <div>
-            <span className="text-white font-bold text-base font-serif">MCN</span>
-            <span className="text-[#c9a227] font-bold text-base font-serif">.ID</span>
-            <p className="text-gray-400 text-[10px] leading-none mt-0.5">Admin Panel</p>
-          </div>
+        <div className="flex flex-col items-start px-1">
+          <img
+            src="/mcnid_horizontal.png"
+            alt="MCNID Logo"
+            className="h-10 w-auto rounded-md mb-2 object-contain"
+          />
+          <p className="text-gray-400 text-[10px] font-bold tracking-widest uppercase pl-0.5">
+            Admin Panel
+          </p>
         </div>
       </div>
 
@@ -125,7 +165,7 @@ export default function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3 px-2">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           if (!item.children) {
             return (
               <Link
@@ -134,8 +174,8 @@ export default function AdminSidebar() {
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 text-sm font-medium transition-all ${
                   isActive(item.href!)
-                    ? 'bg-[#2d6b4a] text-white'
-                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                    ? "bg-[#2d6b4a] text-white"
+                    : "text-gray-300 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <item.icon size={16} />
@@ -153,13 +193,17 @@ export default function AdminSidebar() {
                 onClick={() => toggleGroup(item.label)}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                   groupActive
-                    ? 'text-white bg-white/10'
-                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                    ? "text-white bg-white/10"
+                    : "text-gray-300 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <item.icon size={16} />
                 <span className="flex-1 text-left">{item.label}</span>
-                {isOpen ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                {isOpen ? (
+                  <ChevronDown size={13} />
+                ) : (
+                  <ChevronRight size={13} />
+                )}
               </button>
               {isOpen && (
                 <div className="ml-8 mt-0.5 space-y-0.5 border-l border-white/10 pl-3">
@@ -170,8 +214,8 @@ export default function AdminSidebar() {
                       onClick={() => setMobileOpen(false)}
                       className={`block px-2 py-1.5 text-xs rounded-md transition-all ${
                         isActive(child.href)
-                          ? 'text-white font-semibold'
-                          : 'text-gray-400 hover:text-white hover:bg-white/10'
+                          ? "text-white font-semibold"
+                          : "text-gray-400 hover:text-white hover:bg-white/10"
                       }`}
                     >
                       {child.label}
@@ -186,12 +230,16 @@ export default function AdminSidebar() {
 
       {/* User info at bottom */}
       <div className="border-t border-white/10 p-3 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-[#1a4731] flex items-center justify-center text-white text-xs font-bold">
-          SA
+        <div className="w-8 h-8 rounded-full bg-[#1a4731] flex items-center justify-center text-white text-xs font-bold uppercase">
+          {user?.name?.substring(0, 2) || "AD"}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-xs font-semibold truncate">Superadmin</p>
-          <p className="text-gray-500 text-[10px] truncate">admin@mcn.id</p>
+          <p className="text-white text-xs font-semibold truncate capitalize">
+            {user?.name || user?.username || "Admin"}
+          </p>
+          <p className="text-gray-500 text-[10px] truncate">
+            {user?.email || "admin@mcnid.net"}
+          </p>
         </div>
       </div>
     </div>
