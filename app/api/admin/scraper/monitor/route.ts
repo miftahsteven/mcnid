@@ -12,7 +12,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized: Sesi anda telah berakhir' }, { status: 401 });
     }
 
-    const { query } = await request.json();
+    const { query, forceRegenerate = false } = await request.json();
+    
+    console.log(`Proxying monitor request: query="${query}", forceRegenerate=${forceRegenerate}`);
 
     const res = await fetch(`${BACKEND_URL}/api/scraper/monitor`, {
       method: 'POST',
@@ -20,7 +22,7 @@ export async function POST(request: NextRequest) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, forceRegenerate }),
       cache: 'no-store'
     });
 
