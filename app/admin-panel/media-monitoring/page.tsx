@@ -150,6 +150,17 @@ export default function MediaMonitoringPage() {
             <span className="bg-gray-100 px-2 py-1 rounded">Threads</span>
           </div>
         </form>
+        {error && (
+          <div className="w-full max-w-2xl px-4 mt-6 animate-in slide-in-from-bottom-2">
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl flex items-start gap-3 shadow-sm">
+              <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-sm font-bold text-red-800">Ups! Terjadi Kendala</p>
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
