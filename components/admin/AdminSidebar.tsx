@@ -86,8 +86,8 @@ const navItems: NavItem[] = [
     allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
   {
-    label: "Media",
-    href: "/admin-panel/media",
+    label: "Media Monitoring",
+    href: "/admin-panel/media-monitoring",
     icon: Image,
     allowedRoles: ["SUPER_ADMIN", "ADMIN"],
   },
