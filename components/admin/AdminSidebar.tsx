@@ -87,9 +87,15 @@ const navItems: NavItem[] = [
   },
   {
     label: "Media Monitoring",
-    href: "/admin-panel/media-monitoring",
     icon: Image,
     allowedRoles: ["SUPER_ADMIN", "ADMIN"],
+    children: [
+      { label: "Data Scraping", href: "/admin-panel/media-monitoring" },
+      {
+        label: "Socmed Analysis",
+        href: "/admin-panel/media-monitoring/socmed-analysis",
+      },
+    ],
   },
   {
     label: "Pengguna",

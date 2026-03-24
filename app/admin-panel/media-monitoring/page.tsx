@@ -22,7 +22,8 @@ import {
   Repeat,
   MessageCircle,
   X,
-  RefreshCcw
+  RefreshCcw,
+  BadgeCheck
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -37,9 +38,13 @@ interface MonitorItem {
   snippet: string;
   sentiment: 'Positif' | 'Netral' | 'Negatif';
   commentSentiment?: { Positif: number, Netral: number, Negatif: number };
-  comments?: { text: string, sentiment: string }[];
+  comments?: { text: string, sentiment: string, username?: string, isVerified?: boolean, likes?: number, profileUrl?: string, profileImageUrl?: string }[];
   commentError?: string;
   stats?: { likes: number, retweets: number, replies: number };
+  mediaName?: string;
+  mediaLogo?: string;
+  postUsername?: string;
+  postIsVerified?: boolean;
 }
 
 interface PlatformData {
@@ -358,6 +363,18 @@ export default function MediaMonitoringPage() {
                         <div className="flex-1">
                         {data.items.slice(0, 1).map((item, i) => (
                           <div key={i} className="p-4 hover:bg-gray-50 transition-colors group rounded-xl">
+                            {(item.mediaName || item.postUsername) && (
+                              <div className="flex items-center gap-2 mb-2">
+                                {item.mediaLogo && <img src={item.mediaLogo} alt={item.mediaName} className="w-4 h-4 rounded object-contain bg-white" />}
+                                {item.mediaName && <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{item.mediaName}</span>}
+                                {item.postUsername && (
+                                  <span className="text-[10px] font-bold text-[#1a4731] flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
+                                    {item.postUsername} 
+                                    {item.postIsVerified && <BadgeCheck size={12} className="text-blue-500" />}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                             <div className="flex items-start justify-between gap-4 mb-2">
                               <h4 className={cn(
                                 "text-sm font-bold line-clamp-2 leading-snug group-hover:text-[#1a4731] transition-colors",
@@ -395,6 +412,16 @@ export default function MediaMonitoringPage() {
                                   {item.comments.slice(0, 20).map((comment, ci) => (
                                     <div key={ci} className="text-[11px] leading-relaxed border-l-2 pl-2 flex flex-col gap-0.5" 
                                       style={{ borderLeftColor: comment.sentiment === 'Positif' ? '#22c55e' : comment.sentiment === 'Negatif' ? '#ef4444' : '#94a3b8' }}>
+                                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-500 mb-0.5">
+                                        {comment.profileImageUrl && <img src={comment.profileImageUrl} alt="avatar" className="w-3 h-3 rounded-full object-cover" />}
+                                        {comment.profileUrl ? (
+                                          <a href={comment.profileUrl} target="_blank" rel="noreferrer" className="text-gray-800 hover:underline">{comment.username || "Pengguna"}</a>
+                                        ) : (
+                                          <span className="text-gray-800">{comment.username || "Pengguna"}</span>
+                                        )}
+                                        {comment.isVerified && <BadgeCheck size={10} className="text-blue-500" />}
+                                        {comment.likes ? <span className="flex items-center text-gray-400 gap-0.5 ml-1"><Heart size={8} /> {comment.likes}</span> : null}
+                                      </div>
                                       <p className="text-gray-700 italic">"{comment.text}"</p>
                                       <span className={cn(
                                         "text-[9px] font-bold uppercase",
@@ -507,6 +534,18 @@ export default function MediaMonitoringPage() {
             <div className="flex-1 overflow-y-auto p-4 md:p-6 divide-y divide-gray-100 bg-gray-50/30">
               {selectedPlatformForModal.items.map((item, i) => (
                 <div key={i} className="py-6 first:pt-2 last:pb-2 hover:bg-gray-50/80 transition-colors px-2 md:px-4 rounded-2xl">
+                  {(item.mediaName || item.postUsername) && (
+                    <div className="flex items-center gap-2 mb-3">
+                      {item.mediaLogo && <img src={item.mediaLogo} alt={item.mediaName} className="w-5 h-5 rounded object-contain bg-white shadow-sm border border-gray-100" />}
+                      {item.mediaName && <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{item.mediaName}</span>}
+                      {item.postUsername && (
+                        <span className="text-xs font-bold text-[#1a4731] flex items-center gap-1.5 bg-green-50 px-2 py-1 rounded border border-green-100">
+                          {item.postUsername} 
+                          {item.postIsVerified && <BadgeCheck size={14} className="text-blue-500" />}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-3">
                     <h4 className={cn(
                       "text-base font-bold leading-snug hover:text-[#1a4731] transition-colors flex-1",
@@ -545,6 +584,16 @@ export default function MediaMonitoringPage() {
                         {item.comments.slice(0, 20).map((comment, ci) => (
                           <div key={ci} className="text-xs leading-relaxed border-l-2 pl-3 py-0.5 flex flex-col gap-1" 
                             style={{ borderLeftColor: comment.sentiment === 'Positif' ? '#22c55e' : comment.sentiment === 'Negatif' ? '#ef4444' : '#e2e8f0' }}>
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500">
+                              {comment.profileImageUrl && <img src={comment.profileImageUrl} alt="avatar" className="w-4 h-4 rounded-full object-cover shadow-sm" />}
+                              {comment.profileUrl ? (
+                                <a href={comment.profileUrl} target="_blank" rel="noreferrer" className="text-gray-800 hover:underline">{comment.username || "Pengguna"}</a>
+                              ) : (
+                                <span className="text-gray-800">{comment.username || "Pengguna"}</span>
+                              )}
+                              {comment.isVerified && <BadgeCheck size={12} className="text-blue-500" />}
+                              {comment.likes ? <span className="flex items-center text-gray-400 gap-0.5 ml-1"><Heart size={10} /> {comment.likes}</span> : null}
+                            </div>
                             <p className="text-gray-800 italic">"{comment.text}"</p>
                             <span className={cn(
                               "text-[10px] font-black uppercase tracking-wider",
