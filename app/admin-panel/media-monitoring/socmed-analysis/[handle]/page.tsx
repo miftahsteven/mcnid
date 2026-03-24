@@ -138,7 +138,7 @@ export default function SocmedDetailPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-              { label: 'Total Posts', value: data?.posts?.length || 0, icon: <Instagram size={20}/>, color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Total Views', value: formatNumber(data?.posts?.reduce((acc: number, p: any) => acc + (p.viewsCount || 0), 0) || 0), icon: <TrendingUp size={20}/>, color: 'text-blue-600', bg: 'bg-blue-50' },
               { label: 'Avg. ER per Post', value: (data?.posts?.reduce((acc: number, p: any) => acc + p.er, 0) / (data?.posts?.length || 1)).toFixed(2) + '%', icon: <TrendingUp size={20}/>, color: 'text-[#1a4731]', bg: 'bg-green-50' },
               { label: 'Total Likes', value: formatNumber(data?.posts?.reduce((acc: number, p: any) => acc + p.likesCount, 0) || 0), icon: <Heart size={20}/>, color: 'text-red-500', bg: 'bg-red-50' },
               { label: 'Total Comments', value: formatNumber(data?.posts?.reduce((acc: number, p: any) => acc + p.commentsCount, 0) || 0), icon: <MessageCircle size={20}/>, color: 'text-purple-500', bg: 'bg-purple-50' },
@@ -163,6 +163,7 @@ export default function SocmedDetailPage() {
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest min-w-[300px]">Post & Caption</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Date</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right w-32">Likes</th>
+                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right w-32">Views</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right w-24">Repost</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right w-24">Shared</th>
                 <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center w-24">ER</th>
@@ -222,13 +223,18 @@ export default function SocmedDetailPage() {
                     </span>
                   </td>
                   <td className="px-6 py-6 text-right">
-                    <span className="text-xs font-bold text-gray-400 flex items-center justify-end gap-1.5">
-                      {post.reposts ?? 'N/A'} <Repeat size={14} />
+                    <span className="text-sm font-black text-blue-600 flex items-center justify-end gap-1.5">
+                      {formatNumber(post.viewsCount || 0)} <TrendingUp size={14} />
                     </span>
                   </td>
                   <td className="px-6 py-6 text-right">
                     <span className="text-xs font-bold text-gray-400 flex items-center justify-end gap-1.5">
-                      {post.shared ?? 'N/A'} <Share2 size={14} />
+                      {post.reposts ?? 0} <Repeat size={14} />
+                    </span>
+                  </td>
+                  <td className="px-6 py-6 text-right">
+                    <span className="text-xs font-bold text-gray-400 flex items-center justify-end gap-1.5">
+                      {post.shared ?? 0} <Share2 size={14} />
                     </span>
                   </td>
                   <td className="px-6 py-6 text-center">
