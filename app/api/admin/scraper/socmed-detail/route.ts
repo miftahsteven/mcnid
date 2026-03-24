@@ -3,6 +3,9 @@ import { cookies } from 'next/headers';
 
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:4000';
 
+export const maxDuration = 60; // Increase timeout for scraping tasks
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();

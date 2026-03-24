@@ -95,6 +95,10 @@ const navItems: NavItem[] = [
         label: "Socmed Analysis",
         href: "/admin-panel/media-monitoring/socmed-analysis",
       },
+      {
+        label: "Social Network Analysis",
+        href: "/admin-panel/media-monitoring/socmed-network-analysis",
+      },
     ],
   },
   {
