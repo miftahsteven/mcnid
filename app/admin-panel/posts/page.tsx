@@ -56,8 +56,8 @@ const getImageUrl = (coverImage: string | null) => {
     /* ignore */
   }
 
-  if (raw.startsWith("http")) return raw;
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  if (raw.startsWith("http")) return raw.replace(/^http:/, "https:");
+  const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/^http:/, "https:");
   return `${baseUrl}/uploads/${raw.startsWith("/") ? raw.slice(1) : raw}`;
 };
 
