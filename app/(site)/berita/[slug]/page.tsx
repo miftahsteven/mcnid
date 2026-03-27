@@ -6,12 +6,15 @@ import { notFound } from "next/navigation";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "@/components/ViewTracker";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "mcn_secret_2026_dev";
+// Server-side: use BACKEND_URL for internal SSR fetching (correct port on production)
+const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
+// Client-side cdn: used only for building image src attributes in HTML
+const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 async function getPost(slug: string) {
   try {
-    const res = await fetch(`${API_URL}/api/posts/${slug}`, {
+    const res = await fetch(`${BACKEND_URL}/api/posts/${slug}`, {
       headers: { "x-api-key": INTERNAL_API_KEY },
       cache: "no-store",
     });
@@ -26,7 +29,7 @@ async function getPost(slug: string) {
 
 async function getLatestPosts(excludeId: string) {
   try {
-    const res = await fetch(`${API_URL}/api/latest-posts`, {
+    const res = await fetch(`${BACKEND_URL}/api/latest-posts`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return [];
@@ -48,9 +51,9 @@ export async function generateMetadata({
 
   if (!post) return { title: "Not Found - MCN" };
 
-  const imageUrl = post.coverImage?.startsWith("http")
-    ? post.coverImage
-    : `${API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
+    const imageUrl = post.coverImage?.startsWith("http")
+    ? post.coverImage.replace(/^http:/, "https:")
+    : `${PUBLIC_API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
 
   const description =
     post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>?/gm, "");
@@ -91,8 +94,8 @@ export default async function BeritaDetailPage({
 
   const latestPosts = await getLatestPosts(post.id);
   const imageUrl = post.coverImage?.startsWith("http")
-    ? post.coverImage
-    : `${API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
+    ? post.coverImage.replace(/^http:/, "https:")
+    : `${PUBLIC_API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
 
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://mcnid.net"}/berita/${post.slug}`;
   const publishDate = new Date(post.publishedAt || post.createdAt);
@@ -246,9 +249,9 @@ export default async function BeritaDetailPage({
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {latestPosts.map((related: any) => {
-              const relImg = related.image?.startsWith("http")
-                ? related.image
-                : `${API_URL}${related.image || "/placeholder-news.jpg"}`;
+              const relImg = related.coverImage?.startsWith("http")
+                ? related.coverImage.replace(/^http:/, "https:")
+                : `${PUBLIC_API_URL}${related.coverImage || "/placeholder-news.jpg"}`;
               return (
                 <Link
                   key={related.id}
