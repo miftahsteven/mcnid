@@ -423,7 +423,7 @@ export default function PostsPage() {
                         )}
                         {post.status === "PUBLISHED" && (
                           <a
-                            href={`/news/${post.slug}`}
+                            href={`/berita/${post.slug}`}
                             target="_blank"
                             className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
                             title="Lihat di Web"

@@ -33,6 +33,7 @@ export default function EditPostPage({
     author: "",
     tags: "",
     featuredImage: "",
+    slug: "",
   });
 
   const [scheduleType, setScheduleType] = useState("now");
@@ -105,6 +106,7 @@ export default function EditPostPage({
                 .filter(Boolean)
                 .join(", ") || "",
             featuredImage: post.coverImage || "",
+            slug: post.slug || "",
           });
           // Date formatting for schedule if publishedAt exists and in future
           if (post.publishedAt) {
@@ -184,11 +186,7 @@ export default function EditPostPage({
 
       const payload = {
         title: form.title,
-        slug:
-          form.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "") || `post-${Date.now()}`,
+        slug: form.slug || `post-${Date.now()}`,
         content: form.content,
         excerpt: form.excerpt,
         coverImage: form.featuredImage,
@@ -247,10 +245,7 @@ export default function EditPostPage({
         <div className="flex items-center gap-2">
           {form.status === "PUBLISHED" && (
             <a
-              href={`/news/${form.title
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/(^-|-$)/g, "")}`}
+              href={`/berita/${form.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors"

@@ -2,6 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Clock, Eye, ChevronRight, User, Tag } from "lucide-react";
+import { notFound } from "next/navigation";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "@/components/ViewTracker";
 
@@ -85,25 +86,7 @@ export default async function BeritaDetailPage({
   const post = await getPost(slug);
 
   if (!post) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-7xl mb-4">📰</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-3 font-serif">
-            Postingan Tidak Ditemukan
-          </h1>
-          <p className="text-gray-500 mb-6">
-            Konten yang Anda cari tidak tersedia atau telah dihapus.
-          </p>
-          <Link
-            href="/"
-            className="bg-[#1a4731] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#1a4731]/90 transition-colors"
-          >
-            Kembali ke Beranda
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const latestPosts = await getLatestPosts(post.id);
@@ -116,7 +99,6 @@ export default async function BeritaDetailPage({
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      {/* Silent view tracker */}
       <ViewTracker type="post" slug={post.slug} />
 
       {/* Hero Cover */}
@@ -152,10 +134,15 @@ export default async function BeritaDetailPage({
           <span className="text-gray-400 line-clamp-1">{post.title}</span>
         </nav>
 
-        {/* Categories */}
-        {post.categories?.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {post.categories.map((catObj: any) => (
+        {/* Categories & Status */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {post.status !== "PUBLISHED" && (
+            <span className="text-[10px] font-bold text-white bg-orange-500 px-2.5 py-1 rounded uppercase tracking-wider">
+              {post.status}
+            </span>
+          )}
+          {post.categories?.length > 0 &&
+            post.categories.map((catObj: any) => (
               <span
                 key={catObj.category.id}
                 className="text-[10px] font-bold text-white bg-[#1a4731] px-2.5 py-1 rounded uppercase tracking-wider"
@@ -163,8 +150,7 @@ export default async function BeritaDetailPage({
                 {catObj.category.name}
               </span>
             ))}
-          </div>
-        )}
+        </div>
 
         {/* Title */}
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 font-serif leading-[1.25] mb-5 tracking-tight">
