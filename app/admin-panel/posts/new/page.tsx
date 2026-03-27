@@ -9,6 +9,7 @@ import {
   Plus,
   X,
   Loader2,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import FreeRichTextEditor from "@/components/admin/FreeRichTextEditor";
@@ -26,6 +27,7 @@ export default function NewPostPage() {
     status: "DRAFT",
     author: "",
     tags: "",
+    slug: "",
     featuredImage: "",
   });
 
@@ -142,10 +144,13 @@ export default function NewPostPage() {
       const payload = {
         title: form.title,
         slug:
+          form.slug ||
           form.title
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
-            .replace(/(^-|-$)/g, "") || `post-${Date.now()}`,
+            .replace(/(^-|-$)/g, "")
+            .substring(0, 80) ||
+          `post-${Date.now()}`,
         content: form.content,
         excerpt: form.excerpt,
         coverImage: form.featuredImage,
@@ -312,6 +317,36 @@ export default function NewPostPage() {
                   />
                 </div>
               )}
+            </div>
+            <div className="pt-2 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-gray-500">
+                  URL Slug
+                </label>
+                <button
+                  onClick={() => {
+                    const newSlug = form.title
+                      .toLowerCase()
+                      .replace(/[^a-z0-9]+/g, "-")
+                      .replace(/(^-|-$)/g, "")
+                      .substring(0, 80);
+                    setForm((prev) => ({ ...prev, slug: newSlug }));
+                  }}
+                  className="text-[10px] text-[#1a4731] hover:underline flex items-center gap-0.5"
+                  title="Generate from title"
+                >
+                  <RefreshCw size={10} /> Sync
+                </button>
+              </div>
+              <input
+                type="text"
+                value={form.slug}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, slug: e.target.value }))
+                }
+                placeholder="url-slug-berita"
+                className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1a4731] font-mono"
+              />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1">

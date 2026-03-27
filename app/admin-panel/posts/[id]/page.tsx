@@ -1,14 +1,20 @@
 "use client";
 import { useState, useEffect, use, useRef } from "react";
 import {
-  ArrowLeft,
-  Eye,
   Save,
+  ArrowLeft,
   Image as ImageIcon,
-  Search,
+  Type,
+  Calendar,
+  Clock,
+  Layout,
+  Tag,
   Plus,
   X,
+  Search,
   Loader2,
+  RefreshCw,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import FreeRichTextEditor from "@/components/admin/FreeRichTextEditor";
@@ -167,6 +173,15 @@ export default function EditPostPage({
     } finally {
       setIsSearchingUnsplash(false);
     }
+  };
+
+  const handleSyncSlug = () => {
+    const newSlug = form.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
+      .substring(0, 80); // Limit to 80 chars for safety
+    handleChange("slug", newSlug);
   };
 
   const handleSave = async (statusOverride?: string) => {
@@ -362,6 +377,27 @@ export default function EditPostPage({
                   />
                 </div>
               )}
+            </div>
+            <div className="pt-2 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-gray-500">
+                  URL Slug
+                </label>
+                <button
+                  onClick={handleSyncSlug}
+                  className="text-[10px] text-[#1a4731] hover:underline flex items-center gap-0.5"
+                  title="Generate from title"
+                >
+                  <RefreshCw size={10} /> Sync
+                </button>
+              </div>
+              <input
+                type="text"
+                value={form.slug}
+                onChange={(e) => handleChange("slug", e.target.value)}
+                placeholder="url-slug-berita"
+                className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1a4731] font-mono"
+              />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1">
