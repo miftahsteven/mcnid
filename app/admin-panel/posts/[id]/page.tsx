@@ -28,6 +28,7 @@ export default function EditPostPage({
   const [categories, setCategories] = useState<any[]>([]);
   const [newCatName, setNewCatName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -94,8 +95,12 @@ export default function EditPostPage({
   useEffect(() => {
     if (!id) return;
     fetch(`/api/admin/posts/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          setLoadError(`Gagal memuat (${res.status}): ${data.error || 'Unknown error'}`);
+          return;
+        }
         if (data.data) {
           const post = data.data;
           setForm({
@@ -114,7 +119,6 @@ export default function EditPostPage({
             featuredImage: post.coverImage || "",
             slug: post.slug || "",
           });
-          // Date formatting for schedule if publishedAt exists and in future
           if (post.publishedAt) {
             const d = new Date(post.publishedAt);
             if (d > new Date()) {
@@ -123,9 +127,14 @@ export default function EditPostPage({
               setScheduledTime(d.toISOString().split("T")[1].substring(0, 5));
             }
           }
+        } else {
+          setLoadError("Data artikel tidak ditemukan.");
         }
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        setLoadError(`Koneksi ke backend gagal: ${err.message}`);
+      })
       .finally(() => setIsLoading(false));
   }, [id]);
 
@@ -237,6 +246,17 @@ export default function EditPostPage({
       setIsSaving(false);
     }
   };
+
+  if (loadError) {
+    return (
+      <div className="p-10 text-center">
+        <div className="text-red-500 font-semibold mb-2">Gagal Memuat Artikel</div>
+        <p className="text-gray-500 text-sm mb-4">{loadError}</p>
+        <p className="text-xs text-gray-400">Pastikan konfigurasi <code>BACKEND_URL</code> di server sudah benar dan backend berjalan. Lihat panduan di <code>.env.production</code>.</p>
+        <a href="/admin-panel/posts" className="mt-4 inline-block text-sm text-[#1a4731] hover:underline">← Kembali ke Daftar Berita</a>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <div className="p-10 text-center text-gray-500">Memuat data artikel...</div>;

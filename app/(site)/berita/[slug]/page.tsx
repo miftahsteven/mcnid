@@ -14,10 +14,13 @@ const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000
 
 async function getPost(slug: string) {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/posts/${slug}`, {
-      headers: { "x-api-key": INTERNAL_API_KEY },
-      cache: "no-store",
-    });
+    const res = await fetch(
+      `${BACKEND_URL}/api/posts/by-slug?slug=${encodeURIComponent(slug)}`,
+      {
+        headers: { "x-api-key": INTERNAL_API_KEY },
+        cache: "no-store",
+      }
+    );
     if (!res.ok) return null;
     const json = await res.json();
     return json.data;
