@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, use, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Save,
   ArrowLeft,
@@ -17,14 +17,12 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import FreeRichTextEditor from "@/components/admin/FreeRichTextEditor";
 
-export default function EditPostPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function EditPostPage() {
+  const params = useParams();
+  const id = params?.id as string;
   const [categories, setCategories] = useState<any[]>([]);
   const [newCatName, setNewCatName] = useState("");
   const [isLoading, setIsLoading] = useState(true);

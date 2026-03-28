@@ -63,8 +63,7 @@ export default function AdminLoginPage() {
         }
         transitionToStep("otp");
       } else {
-        router.replace("/admin-panel");
-        router.refresh();
+        window.location.href = "/admin-panel";
       }
     } catch {
       setError("Gagal terhubung ke server");
@@ -111,8 +110,7 @@ export default function AdminLoginPage() {
         otpRefs.current[0]?.focus();
         return;
       }
-      router.replace("/admin-panel");
-      router.refresh();
+      window.location.href = "/admin-panel";
     } catch {
       setError("Gagal memverifikasi OTP");
     } finally {

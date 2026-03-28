@@ -14,16 +14,28 @@ const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000
 
 async function getPost(slug: string) {
   try {
-    const res = await fetch(
+    const urlsToTry = [
       `${BACKEND_URL}/api/posts/by-slug?slug=${encodeURIComponent(slug)}`,
-      {
-        headers: { "x-api-key": INTERNAL_API_KEY },
-        cache: "no-store",
+      `${BACKEND_URL}/api/posts/${encodeURIComponent(slug)}`,
+      `${PUBLIC_API_URL}/api/posts/by-slug?slug=${encodeURIComponent(slug)}`,
+      `${PUBLIC_API_URL}/api/posts/${encodeURIComponent(slug)}`
+    ];
+
+    for (const url of urlsToTry) {
+      try {
+        const res = await fetch(url, {
+          headers: { "x-api-key": INTERNAL_API_KEY },
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data) return json.data;
+        }
+      } catch (e) {
+        // Silently ignore connection errors and try the next fallback URL
       }
-    );
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data;
+    }
+    return null;
   } catch (err) {
     console.error("Error fetching post data:", err);
     return null;
