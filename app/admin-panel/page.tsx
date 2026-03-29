@@ -49,7 +49,7 @@ export default async function AdminDashboard() {
     { label: 'Pendaftar Academy', value: statsData ? formatNumber(statsData.totalAcademy) : '0', change: 'Segera Hadir', icon: GraduationCap, color: 'bg-purple-500', href: '/admin-panel/courses' },
     { label: 'Total Online Realtime', value: statsData ? formatNumber(statsData.onlineRealtime) : '0', change: 'Simulasi Langsung', icon: Activity, color: 'bg-yellow-500', href: '#' },
     { label: 'Berita Trending', value: statsData ? formatNumber(statsData.trendingNews) : '0', change: '> 20 Tayangan', icon: Flame, color: 'bg-green-600', href: '/admin-panel/posts' },
-    { label: 'Total Global Views', value: statsData ? formatNumber(statsData.totalViews) : '0', change: 'Artikel & Video', icon: Eye, color: 'bg-indigo-500', href: '/admin-panel/analytics' },
+    { label: 'Total Global Views', value: statsData ? formatNumber(statsData.totalViews) : '0', change: 'Artikel & Video', icon: Eye, color: 'bg-indigo-500', href: '/admin-panel/media-monitoring' },
   ];
 
   return (
@@ -139,7 +139,7 @@ export default async function AdminDashboard() {
                 { label: 'Kursus Baru', href: '/admin-panel/courses/new', icon: GraduationCap, color: 'text-purple-600 bg-purple-50' },
                 { label: 'Program ZIS', href: '/admin-panel/zis/new', icon: Heart, color: 'text-yellow-600 bg-yellow-50' },
                 { label: 'Tambah User', href: '/admin-panel/users', icon: Users, color: 'text-green-600 bg-green-50' },
-                { label: 'Lihat Analitik', href: '/admin-panel/analytics', icon: BarChart2, color: 'text-indigo-600 bg-indigo-50' },
+                { label: 'Lihat Analitik', href: '/admin-panel/media-monitoring', icon: BarChart2, color: 'text-indigo-600 bg-indigo-50' },
               ].map((action) => (
                 <Link key={action.label} href={action.href}
                   className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all text-center group">
