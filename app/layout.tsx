@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body>
-        {/* Google Analytics */}
+        {/* Google Analytics - Placed at top of body for early loading without breaking Next.js head management */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-94PR12JYPW"
           strategy="afterInteractive"
