@@ -1,22 +1,37 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import {
   Newspaper, Video, GraduationCap, Heart, Users,
   Eye, TrendingUp, ArrowUpRight, Clock, Plus,
-  MessageSquare, BarChart2
+  MessageSquare, BarChart2, Activity, Flame
 } from 'lucide-react';
-import { newsArticles, videos, courses, zisPrograms, formatNumber, formatDate } from '@/lib/dummy-data';
+import { newsArticles, formatNumber, formatDate } from '@/lib/dummy-data';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
-const stats = [
-  { label: 'Total Artikel', value: '248', change: '+12 bulan ini', icon: Newspaper, color: 'bg-blue-500', href: '/admin-panel/posts' },
-  { label: 'Total Video', value: '86', change: '+5 bulan ini', icon: Video, color: 'bg-red-500', href: '/admin-panel/videos' },
-  { label: 'Pendaftar Academy', value: '35,840', change: '+820 bulan ini', icon: GraduationCap, color: 'bg-purple-500', href: '/admin-panel/courses' },
-  { label: 'Total Donatur', value: '125,000', change: '+3,200 bulan ini', icon: Heart, color: 'bg-yellow-500', href: '/admin-panel/zis' },
-  { label: 'Total Pengguna', value: '48,200', change: '+1,100 bulan ini', icon: Users, color: 'bg-green-600', href: '/admin-panel/users' },
-  { label: 'Views Bulan Ini', value: '1.2jt', change: '+18% vs bulan lalu', icon: Eye, color: 'bg-indigo-500', href: '/admin-panel/analytics' },
-];
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
+
+async function getDashboardStats() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    if (!token) return null;
+
+    const res = await fetch(`${BACKEND_URL}/api/admin/dashboard/stats`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      cache: 'no-store'
+    });
+    
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data;
+  } catch (err) {
+    console.error('Error fetching dashboard stats:', err);
+    return null;
+  }
+}
+
 
 const recentPosts = newsArticles.slice(0, 5);
 const recentComments = [
@@ -25,7 +40,18 @@ const recentComments = [
   { author: 'Ahmad Fauzi', content: 'Mohon penjelasan lebih lanjut...', post: 'Fatwa MUI Terbaru: Investasi Kripto...', time: '1 jam lalu', avatar: 'AF' },
 ];
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const statsData = await getDashboardStats();
+
+  const stats = [
+    { label: 'Total News', value: statsData ? formatNumber(statsData.totalNews) : '0', change: 'Semua Kategori', icon: Newspaper, color: 'bg-blue-500', href: '/admin-panel/posts' },
+    { label: 'Total Video', value: statsData ? formatNumber(statsData.totalVideo) : '0', change: 'Semua Kategori', icon: Video, color: 'bg-red-500', href: '/admin-panel/videos' },
+    { label: 'Pendaftar Academy', value: statsData ? formatNumber(statsData.totalAcademy) : '0', change: 'Segera Hadir', icon: GraduationCap, color: 'bg-purple-500', href: '/admin-panel/courses' },
+    { label: 'Total Online Realtime', value: statsData ? formatNumber(statsData.onlineRealtime) : '0', change: 'Simulasi Langsung', icon: Activity, color: 'bg-yellow-500', href: '#' },
+    { label: 'Berita Trending', value: statsData ? formatNumber(statsData.trendingNews) : '0', change: '> 20 Tayangan', icon: Flame, color: 'bg-green-600', href: '/admin-panel/posts' },
+    { label: 'Total Global Views', value: statsData ? formatNumber(statsData.totalViews) : '0', change: 'Artikel & Video', icon: Eye, color: 'bg-indigo-500', href: '/admin-panel/analytics' },
+  ];
+
   return (
     <div className="space-y-6 font-[var(--font-sans)]">
       {/* Page header */}
