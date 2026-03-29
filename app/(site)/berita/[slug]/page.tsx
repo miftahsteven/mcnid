@@ -13,6 +13,7 @@ const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
 const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 import * as jose from "jose";
+import { getPublicImageUrl } from "@/lib/backend-config";
 
 async function getPost(slug: string) {
   try {
@@ -157,15 +158,14 @@ export default async function BeritaDetailPage({
       {/* Hero Cover */}
       <div className="w-full bg-white">
         <div className="max-w-5xl mx-auto">
-          <figure className="relative overflow-hidden max-h-[480px] md:max-h-[560px]">
+          <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-lg border border-gray-100">
             <img
-              src={imageUrl}
+              src={getPublicImageUrl(post.coverImage)}
               alt={post.title}
-              className="w-full h-full object-cover"
-              style={{ aspectRatio: "16/7" }}
+              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          </figure>
+          </div>
         </div>
       </div>
 
@@ -222,7 +222,7 @@ export default async function BeritaDetailPage({
           <div className="flex items-center gap-3">
             {post.author?.image ? (
               <img
-                src={post.author.image}
+                src={getPublicImageUrl(post.author.image)}
                 alt={post.author.name}
                 className="w-10 h-10 rounded-full ring-2 ring-gray-100 object-cover"
               />

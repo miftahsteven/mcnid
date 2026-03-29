@@ -20,6 +20,7 @@ import {
   formatCurrency,
   calcProgress,
 } from "@/lib/dummy-data";
+import { getPublicImageUrl } from "@/lib/backend-config";
 
 // Helper: Category color
 function getCategoryColor(cat: string) {
@@ -85,9 +86,7 @@ export default async function HomePage() {
           {/* Secondary News - 4 vertical */}
           <div className="flex flex-col justify-between h-full gap-3 overflow-hidden">
             {latestItems.map((article) => {
-              const imageUrl = article.image?.startsWith("http") 
-                ? article.image 
-                : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${article.image || "/placeholder-news.jpg"}`;
+              const imageUrl = getPublicImageUrl(article.image);
                 
               return (
                 <Link
@@ -154,9 +153,7 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {beritaTerkini.map((article) => {
-                const imageUrl = article.image?.startsWith("http") 
-                  ? article.image 
-                  : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${article.image || "/placeholder-news.jpg"}`;
+                const imageUrl = getPublicImageUrl(article.image);
                   
                 return (
                   <Link
@@ -295,7 +292,7 @@ export default async function HomePage() {
                 className="group relative rounded-2xl overflow-hidden aspect-video block shadow-2xl ring-1 ring-white/10"
               >
                 <img
-                  src={featuredVideo.thumbnail}
+                  src={getPublicImageUrl(featuredVideo.thumbnail)}
                   alt={featuredVideo.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 />
@@ -348,7 +345,7 @@ export default async function HomePage() {
                 >
                   <div className="relative w-36 md:w-40 aspect-video flex-shrink-0 overflow-hidden rounded-lg shadow-inner ring-1 ring-black/20">
                     <img
-                      src={vid.thumbnail}
+                      src={getPublicImageUrl(vid.thumbnail)}
                       alt={vid.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />

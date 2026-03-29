@@ -28,6 +28,7 @@ interface PaginationData {
   totalPages: number;
 }
 
+import { getPublicImageUrl } from "@/lib/backend-config";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const categories = ["Semua", "Nasional", "Keislaman", "Kegiatan", "Tokoh", "MCN Play"];
 
@@ -246,7 +247,7 @@ function IndeksContent() {
                   {/* Small Image Overlay Design */}
                   <div className="relative w-full sm:w-40 md:w-48 aspect-video sm:aspect-square md:aspect-video rounded-xl overflow-hidden shrink-0 shadow-sm">
                     <img
-                      src={item.image || "/images/placeholder.jpg"}
+                      src={getPublicImageUrl(item.image)}
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />

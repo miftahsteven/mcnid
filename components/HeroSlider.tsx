@@ -39,11 +39,7 @@ function getCategoryColor(cat: string) {
   return map[cat] || "bg-[#1a4731]";
 }
 
-const getImageUrl = (image: string | null) => {
-  if (!image) return "/placeholder-news.jpg";
-  if (image.startsWith("http")) return image;
-  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}${image}`;
-};
+import { getPublicImageUrl } from "@/lib/backend-config";
 
 export default function HeroSlider({ highlights }: HeroSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,7 +84,7 @@ export default function HeroSlider({ highlights }: HeroSliderProps) {
           <div key={hero.id + idx} className="w-full h-full shrink-0 relative">
             <Link href={resolveLink(hero)} className="w-full h-full block">
               <img
-                src={getImageUrl(hero.image)}
+                src={getPublicImageUrl(hero.image)}
                 alt={hero.title}
                 className="w-full h-full object-cover opacity-80"
               />

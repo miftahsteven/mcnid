@@ -15,6 +15,8 @@ import ViewTracker from "@/components/ViewTracker";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "mcn_secret_2026_dev";
 
+import { getPublicImageUrl } from "@/lib/backend-config";
+
 async function getVideo(slug: string) {
   try {
     const res = await fetch(`${API_URL}/api/videos/${slug}`, {
@@ -66,9 +68,7 @@ export async function generateMetadata({
     return { title: "Not Found - MCN Play" };
   }
 
-  const imageUrl = video.coverImage?.startsWith("http")
-    ? video.coverImage
-    : `${API_URL}${video.coverImage || "/placeholder-video.jpg"}`;
+  const imageUrl = getPublicImageUrl(video.coverImage || video.thumbnail);
 
   return {
     title: `${video.title} | MCN Play`,
@@ -158,18 +158,14 @@ export default async function MCNPlayDetailPage({
                 controls
                 className="w-full h-full absolute inset-0 object-contain"
                 poster={
-                  video.coverImage ? `${API_URL}${video.coverImage}` : undefined
+                  getPublicImageUrl(video.coverImage || video.thumbnail)
                 }
               />
             ) : (
               // Fallback if no valid URL
               <div className="relative w-full h-full">
                 <img
-                  src={
-                    video.coverImage?.startsWith("http")
-                      ? video.coverImage
-                      : `${API_URL}${video.coverImage}`
-                  }
+                  src={getPublicImageUrl(video.coverImage || video.thumbnail)}
                   alt={video.title}
                   className="w-full h-full object-cover opacity-50"
                 />
@@ -206,7 +202,7 @@ export default async function MCNPlayDetailPage({
             <div className="flex items-center gap-4">
               {video.author?.image ? (
                 <img
-                  src={video.author.image}
+                  src={getPublicImageUrl(video.author.image)}
                   alt="Author"
                   className="w-10 h-10 rounded-full ring-2 ring-gray-700"
                 />
@@ -276,11 +272,7 @@ export default async function MCNPlayDetailPage({
 
             <div className="flex flex-col gap-5">
               {latestVideos.map((relVid: any) => {
-                const relImg =
-                  relVid.thumbnail?.startsWith("http") ||
-                  relVid.coverImage?.startsWith("http")
-                    ? relVid.thumbnail || relVid.coverImage
-                    : `${API_URL}${relVid.thumbnail || relVid.coverImage || "/placeholder-video.jpg"}`;
+                const relImg = getPublicImageUrl(relVid.thumbnail || relVid.coverImage);
 
                 return (
                   <Link
