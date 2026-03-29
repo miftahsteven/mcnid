@@ -93,15 +93,21 @@ export default function PostsPage() {
   };
 
   const handleScrape = async () => {
+    const keyword = window.prompt("Masukkan keyword/topik berita yang ingin ditarik otomatis dari internet:", "");
+    if (!keyword) return;
     if (
       !confirm(
-        "Buka koneksi untuk menarik berita terbaru? Proses ini mungkin membutuhkan waktu beberapa saat.",
+        `Menarik berita dengan keyword "${keyword}"? Proses ini mungkin membutuhkan waktu beberapa saat.`
       )
     )
       return;
     try {
       setIsScraping(true);
-      const res = await fetch("/api/admin/scraper/run", { method: "POST" });
+      const res = await fetch("/api/admin/scraper/run", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: keyword })
+      });
       const json = await res.json();
       if (!res.ok)
         throw new Error(json.error || json.message || "Gagal menarik berita");

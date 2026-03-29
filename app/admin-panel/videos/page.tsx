@@ -72,10 +72,16 @@ export default function VideosPage() {
   }, []);
 
   const handleScrape = async () => {
-    if (!confirm("Buka koneksi untuk menarik video terbaru dari YouTube? Proses ini mungkin membutuhkan waktu beberapa saat.")) return;
+    const keyword = window.prompt("Masukkan keyword/topik video yang ingin ditarik otomatis dari YouTube:", "");
+    if (!keyword) return;
+    if (!confirm(`Menarik video YouTube dengan keyword "${keyword}"? Proses ini mungkin membutuhkan waktu beberapa saat.`)) return;
     try {
       setIsScraping(true);
-      const res = await fetch("/api/admin/scraper/play-run", { method: "POST" });
+      const res = await fetch("/api/admin/scraper/play-run", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: keyword })
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || json.message || "Gagal menarik video");
       alert(json.message);

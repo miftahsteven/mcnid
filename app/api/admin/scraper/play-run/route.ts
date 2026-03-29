@@ -12,12 +12,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let reqBody: any = {};
+    try {
+      reqBody = await request.json();
+    } catch (e) {
+      // Ignore if body is empty
+    }
+
     const res = await fetch(`${BACKEND_URL}/api/scraper/play-run`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify(reqBody),
       cache: 'no-store'
     });
 
