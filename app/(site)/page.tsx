@@ -76,7 +76,7 @@ export default async function HomePage() {
   // MCN Play API Logic
   const validVideos = latestVideosItems.length > 0 ? latestVideosItems : videos;
   const featuredVideo = validVideos[0];
-  const videoList = validVideos.slice(1, 5);
+  const videoList = validVideos.slice(1);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -340,7 +340,7 @@ export default async function HomePage() {
             </div>
 
             {/* Video list */}
-            <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4 overflow-y-auto max-h-[600px] scrollbar-thin">
               {videoList.map((vid: any) => (
                 <Link
                   key={vid.id || vid.slug}
