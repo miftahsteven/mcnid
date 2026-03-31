@@ -87,10 +87,10 @@ export default function VideoCard({ video, onPlay }: VideoCardProps) {
   return (
     <div 
       onClick={() => onPlay(video)}
-      className="group cursor-pointer flex flex-col gap-3 bg-transparent hover:bg-white/5 p-2 rounded-2xl transition-all duration-300"
+      className="group cursor-pointer flex flex-col gap-3 bg-transparent hover:bg-white/5 p-0 sm:p-2 rounded-none sm:rounded-2xl transition-all duration-300"
     >
       {/* Thumbnail Container */}
-      <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/5 bg-gray-900 group-hover:ring-red-600/30 transition-all">
+      <div className="relative aspect-video rounded-none sm:rounded-xl overflow-hidden shadow-2xl ring-0 sm:ring-1 ring-white/5 bg-gray-900 group-hover:ring-red-600/30 transition-all">
         <img 
           src={imageUrl} 
           alt={video.title} 
@@ -118,7 +118,7 @@ export default function VideoCard({ video, onPlay }: VideoCardProps) {
       </div>
       
       {/* Info Container */}
-      <div className="flex gap-3 px-1">
+      <div className="flex gap-3 px-3 sm:px-1 mb-2 sm:mb-0">
         {/* Channel Avatar Placeholder (YouTube style) */}
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-purple-700 flex items-center justify-center shrink-0 border border-white/10 shadow-lg">
            <span className="text-white font-bold text-xs">M</span>

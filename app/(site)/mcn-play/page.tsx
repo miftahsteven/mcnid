@@ -24,6 +24,7 @@ export default function MCNPlayPage() {
   const [search, setSearch] = useState("");
   const [playing, setPlaying] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -76,16 +77,27 @@ export default function MCNPlayPage() {
           </div>
         </div>
 
-        <div className="flex-1 max-w-2xl mx-6 hidden md:block">
-          <div className="relative group">
+        <div className={`flex-1 max-w-2xl mx-6 ${showMobileSearch ? 'fixed inset-0 z-[60] bg-[#0f0f0f] px-4 flex items-center h-16 animate-in slide-in-from-right duration-200' : 'hidden md:block'}`}>
+          <div className="relative group w-full">
+            {showMobileSearch && (
+              <button 
+                onClick={() => setShowMobileSearch(false)}
+                className="absolute left-[-8px] top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-full md:hidden"
+              >
+                <ChevronRight size={24} className="rotate-180" />
+              </button>
+            )}
             <input 
               type="text" 
               placeholder="Cari video..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#121212] border border-white/10 rounded-full py-2 px-12 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all placeholder:text-gray-600"
+              className={`w-full bg-[#121212] border border-white/10 rounded-full py-2 ${showMobileSearch ? 'pl-10' : 'px-12'} focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600/50 transition-all placeholder:text-gray-600`}
+              autoFocus={showMobileSearch}
             />
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-500 transition-colors" />
+            {!showMobileSearch && (
+               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-500 transition-colors" />
+            )}
             {search && (
               <button 
                 onClick={() => setSearch("")}
@@ -102,7 +114,7 @@ export default function MCNPlayPage() {
              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
              <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">Live Now</span>
           </div>
-          <button className="p-2 hover:bg-white/10 rounded-full lg:hidden" onClick={() => alert("Search mobile soon")}>
+          <button className="p-2 hover:bg-white/10 rounded-full md:hidden" onClick={() => setShowMobileSearch(true)}>
             <Search size={20} />
           </button>
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 border border-white/20 shadow-inner"></div>
@@ -111,7 +123,7 @@ export default function MCNPlayPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* YouTube Style Sidebar */}
-        <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-[#0f0f0f] border-r border-white/5 transition-all duration-300 flex flex-col overflow-y-auto overflow-x-hidden pt-4 shrink-0`}>
+        <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} hidden md:flex bg-[#0f0f0f] border-r border-white/5 transition-all duration-300 flex flex-col overflow-y-auto overflow-x-hidden pt-4 shrink-0`}>
           <div className="px-3 space-y-1">
              <SidebarItem 
                icon={<Home size={20} />} 
@@ -162,9 +174,9 @@ export default function MCNPlayPage() {
         <main className="flex-1 overflow-y-auto bg-[#0a0a0a]">
            {/* Mobile Search Overlay Placeholder */}
            
-           <div className="max-w-[1800px] mx-auto p-4 md:p-8">
+           <div className="max-w-[1800px] mx-auto px-0 md:px-8 py-4 md:py-8">
               {/* Category Pills (YouTube sub-nav) */}
-              <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2 scrollbar-hide px-4 md:px-0">
                  <button 
                   onClick={() => setActiveCategory('all')}
                   className={`px-4 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${activeCategory === 'all' ? 'bg-white text-black border-white' : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/15'}`}
@@ -303,8 +315,15 @@ export default function MCNPlayPage() {
                   </div>
                </div>
                
-               <div className="mt-6 bg-[#1a1a1a] p-4 rounded-xl text-gray-400 text-sm leading-relaxed max-h-32 overflow-y-auto scrollbar-thin">
-                  {playing.description || "Tidak ada deskripsi untuk video ini."}
+               <div className="mt-6 bg-[#1a1a1a] p-4 rounded-xl text-gray-400 text-sm leading-relaxed max-h-48 overflow-y-auto scrollbar-thin">
+                  {playing.description ? (
+                    <div 
+                      className="prose prose-invert prose-sm max-w-none prose-a:text-red-500 prose-p:mb-2 prose-ul:list-disc prose-ul:pl-4"
+                      dangerouslySetInnerHTML={{ __html: playing.description }} 
+                    />
+                  ) : (
+                    "Tidak ada deskripsi untuk video ini."
+                  )}
                </div>
             </div>
           </div>
