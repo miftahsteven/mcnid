@@ -274,20 +274,30 @@ export default function MCNPlayPage() {
             {/* Video Player */}
             <div className="aspect-video bg-black relative shadow-inner overflow-hidden">
                {/* Embed YouTube or Source */}
-               {playing.sourceType === 'YOUTUBE' ? (
-                 <iframe 
-                   src={`https://www.youtube.com/embed/${playing.videoUrl?.split('v=')[1]?.split('&')[0] || playing.videoUrl?.split('/').pop()}?autoplay=1`}
-                   className="w-full h-full"
-                   allow="autoplay; encrypted-media"
-                   allowFullScreen
-                 ></iframe>
-               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                  <Play size={64} className="text-red-600 mb-6 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" fill="currentColor" />
-                  <p className="text-gray-300 font-serif text-lg mb-2">{playing.title}</p>
-                  <p className="text-gray-500 text-sm italic">Video dalam pemrosesan server MCN Play...</p>
-                </div>
-               )}
+                {playing.sourceType === 'YOUTUBE' ? (
+                  <iframe 
+                    src={`https://www.youtube.com/embed/${playing.videoUrl?.split('v=')[1]?.split('&')[0] || playing.videoUrl?.split('/').pop()}?autoplay=1`}
+                    className="w-full h-full"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  ></iframe>
+                ) : playing.videoUrl ? (
+                  <video 
+                    src={playing.videoUrl.startsWith('http') ? playing.videoUrl : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${playing.videoUrl.startsWith('/') ? '' : '/'}${playing.videoUrl}`}
+                    className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                   <Play size={64} className="text-red-600 mb-6 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]" fill="currentColor" />
+                   <p className="text-gray-300 font-serif text-lg mb-2">{playing.title}</p>
+                   <p className="text-gray-500 text-sm italic">Video dalam pemrosesan server MCN Play...</p>
+                 </div>
+                )}
                {/* Controls/Close Overlay */}
                <button 
                 onClick={() => setPlaying(null)}
