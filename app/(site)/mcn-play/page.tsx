@@ -349,8 +349,8 @@ export default function MCNPlayPage() {
                      <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-full transition-all font-bold text-sm">
                         <ThumbsUp size={16} /> Like
                      </button>
-                     <button className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-6 py-2.5 rounded-full transition-all font-bold text-sm shadow-lg shadow-red-600/20">
-                        Subscribe
+                     <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-full transition-all font-bold text-sm">
+                        <ThumbsDown size={16} /> Dislike
                      </button>
                   </div>
                </div>
