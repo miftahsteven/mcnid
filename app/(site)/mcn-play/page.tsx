@@ -8,6 +8,7 @@ import {
   Home, 
   Layers, 
   ThumbsUp, 
+  ThumbsDown,
   X,
   Menu,
   ChevronRight,
@@ -63,18 +64,37 @@ export default function MCNPlayPage() {
       {/* Top Search Bar */}
       <header className="sticky top-0 z-50 bg-[#0f0f0f]/95 backdrop-blur-md border-b border-white/5 h-16 flex items-center px-4 justify-between transition-all">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors"
-          >
-            <Menu size={20} />
-          </button>
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => (window.location.href = '/')}>
-            <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center p-1 shadow-lg shadow-red-600/20">
-               <Play size={16} fill="white" className="text-white" />
+          <div className="flex items-center group cursor-pointer" onClick={() => (window.location.href = '/')}>
+            <div className="relative flex items-center bg-[#1a1a1a] px-3 py-1.5 rounded-sm shadow-2xl overflow-hidden border border-white/5 ring-1 ring-white/10">
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              
+              <div className="w-1.5 h-6 bg-red-600 mr-2 rounded-full shadow-[0_0_10px_rgba(220,38,38,0.5)]"></div>
+              
+              <span className="text-white font-black tracking-tight text-xl font-serif">
+                 MCN<span className="text-red-600 ml-0.5 uppercase italic tracking-widest text-lg font-sans underline decoration-white/20 underline-offset-4">Play</span>
+              </span>
+              
+              {/* Subtle periodic shine (Live TV feel) */}
+              <div className="absolute inset-0 z-10 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-[-20deg] animate-glimmer pointer-events-none"></div>
             </div>
-            <span className="font-bold text-xl font-serif tracking-tight hidden sm:block">MCN<span className="text-red-600">PLAY</span></span>
+            
+            {/* Live Indicator (Desktop only) */}
+            <div className="hidden sm:flex items-center gap-1.5 ml-4 px-2 py-0.5 rounded bg-red-600/10 border border-red-600/30">
+               <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></div>
+               <span className="text-[10px] font-bold text-red-600 uppercase tracking-tighter">HD</span>
+            </div>
           </div>
+          <style jsx global>{`
+            @keyframes glimmer {
+              0% { transform: translateX(-150%) skewX(-20deg); }
+              20% { transform: translateX(150%) skewX(-20deg); }
+              100% { transform: translateX(150%) skewX(-20deg); }
+            }
+            .animate-glimmer {
+              animation: glimmer 6s infinite ease-in-out;
+            }
+          `}</style>
         </div>
 
         <div className={`flex-1 max-w-2xl mx-6 ${showMobileSearch ? 'fixed inset-0 z-[60] bg-[#0f0f0f] px-4 flex items-center h-16 animate-in slide-in-from-right duration-200' : 'hidden md:block'}`}>
@@ -244,11 +264,11 @@ export default function MCNPlayPage() {
       {/* Consistent Video Modal (YouTube Theater Mode / Popup) */}
       {playing && (
         <div 
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-300"
+          className="fixed inset-0 z-[100] bg-black/95 flex items-start sm:items-center justify-center backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-300 overflow-y-auto"
           onClick={() => setPlaying(null)}
         >
           <div 
-            className="w-full max-w-5xl bg-[#0f0f0f] rounded-2xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/5"
+            className="w-full max-w-5xl bg-[#0f0f0f] sm:rounded-2xl overflow-hidden shadow-2xl border-x border-b sm:border border-white/10 ring-1 ring-white/5 my-0 sm:my-8"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Video Player */}
@@ -287,6 +307,16 @@ export default function MCNPlayPage() {
                     <h2 className="text-white font-bold text-2xl font-serif leading-tight">
                       {playing.title}
                     </h2>
+                    
+                    {/* Mobile Only: Like/Dislike under title */}
+                    <div className="flex md:hidden items-center gap-2 mt-4">
+                       <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full transition-all font-bold text-xs border border-white/5">
+                          <ThumbsUp size={14} /> Like
+                       </button>
+                       <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-full transition-all font-bold text-xs border border-white/5">
+                          <ThumbsDown size={14} /> Dislike
+                       </button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-4">
                      <div className="text-right">
@@ -296,7 +326,7 @@ export default function MCNPlayPage() {
                   </div>
                </div>
 
-               <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-white/5">
+                <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-white/5">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 border border-white/10 flex items-center justify-center text-lg font-bold shadow-lg">M</div>
                     <div>
@@ -305,7 +335,7 @@ export default function MCNPlayPage() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-2">
                      <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-full transition-all font-bold text-sm">
                         <ThumbsUp size={16} /> Like
                      </button>
@@ -315,7 +345,7 @@ export default function MCNPlayPage() {
                   </div>
                </div>
                
-               <div className="mt-6 bg-[#1a1a1a] p-4 rounded-xl text-gray-400 text-sm leading-relaxed max-h-48 overflow-y-auto scrollbar-thin">
+               <div className="mt-4 md:mt-6 bg-[#1a1a1a] p-4 rounded-xl text-gray-400 text-sm leading-relaxed max-h-48 overflow-y-auto scrollbar-thin">
                   {playing.description ? (
                     <div 
                       className="prose prose-invert prose-sm max-w-none prose-a:text-red-500 prose-p:mb-2 prose-ul:list-disc prose-ul:pl-4"
