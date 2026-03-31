@@ -8,18 +8,19 @@ import {
   ArrowRight,
   BookOpen,
   TrendingUp,
+  ArrowUpRight
 } from "lucide-react";
 import {
   newsArticles,
   opinArticles,
   videos,
   courses,
-  zisPrograms,
   formatDate,
   formatNumber,
   formatCurrency,
   calcProgress,
 } from "@/lib/dummy-data";
+import { getZisPrograms, ZisProgram } from "@/lib/zis-api";
 import { getPublicImageUrl } from "@/lib/backend-config";
 
 // Helper: Category color
@@ -63,6 +64,9 @@ export default async function HomePage() {
   } catch (err) {
     console.error("Failed to fetch public api data:", err);
   }
+
+  // Fetch ZIS live data
+  const liveZis = await getZisPrograms(0, 4);
 
   // Filter out duplicates that are already in latestItems (Secondary list)
   const usedIds = new Set(latestItems.map(item => item.id));
@@ -508,7 +512,7 @@ export default async function HomePage() {
               ZIS Network
             </h2>
             <p className="text-gray-500 text-sm mt-1">
-              Program penghimpunan dan penyaluran ZIS
+              Program penghimpunan dan penyaluran ZIS bekerjasama dengan amanahzakat.id
             </p>
           </div>
           <Link
@@ -518,60 +522,83 @@ export default async function HomePage() {
             Lihat Semua <ArrowRight size={15} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {zisPrograms.slice(0, 3).map((prog) => {
-            const pct = calcProgress(prog.collected, prog.target);
-            return (
-              <div
-                key={prog.id}
-                className="bg-white rounded-xl overflow-hidden border border-gray-100 card-hover shadow-sm"
-              >
-                <div className="aspect-video overflow-hidden">
-                  <img
-                    src={prog.image}
-                    alt={prog.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-400"
-                  />
-                </div>
-                <div className="p-4">
-                  <span className="text-[10px] font-bold text-[#c9a227] bg-yellow-50 px-2 py-0.5 rounded-full">
-                    {prog.category}
-                  </span>
-                  <h3 className="text-gray-900 font-bold text-sm mt-2 leading-snug font-serif">
-                    {prog.title}
-                  </h3>
-                  <p className="text-gray-500 text-xs mt-1 line-clamp-2">
-                    {prog.description}
-                  </p>
-                  {/* Progress bar */}
-                  <div className="mt-3">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Terkumpul {pct}%</span>
-                      <span>{formatCurrency(prog.target)}</span>
+
+        {liveZis.length === 0 ? (
+          <div className="bg-gradient-to-br from-yellow-50 to-white border border-yellow-100 rounded-2xl p-10 text-center max-w-3xl mx-auto shadow-sm">
+            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <span className="text-4xl">🤲</span>
+            </div>
+            <h3 className="text-gray-900 font-bold text-xl font-serif">Akses Donasi Langsung</h3>
+            <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-lg mx-auto">
+              Saat ini data ZIS Network sedang dalam pembaharuan sistem. Anda dapat melihat program donasi dan menyalurkan zakat secara langsung melalui portal utama mitra kami di <strong>amanahzakat.id</strong>.
+            </p>
+            <a 
+              href="https://amanahzakat.id" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center gap-3 bg-[#c9a227] hover:bg-yellow-600 text-white font-bold py-3.5 px-10 rounded-full transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+            >
+              Klik untuk Berdonasi <ArrowUpRight size={18} />
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {liveZis.map((prog) => {
+              const pct = calcProgress(prog.collected, prog.target);
+              return (
+                <div
+                  key={prog.id}
+                  className="bg-white rounded-xl overflow-hidden border border-gray-100 card-hover shadow-sm flex flex-col"
+                >
+                  <div className="aspect-video overflow-hidden relative">
+                    <img
+                      src={prog.image}
+                      alt={prog.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-2 left-2">
+                       <span className="text-[9px] uppercase tracking-wider font-bold text-white bg-[#c9a227] px-2 py-0.5 rounded shadow-sm">
+                        {prog.category}
+                      </span>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div
-                        className="bg-[#c9a227] h-2 rounded-full transition-all"
-                        style={{ width: `${pct}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-[#1a4731] font-bold text-sm mt-1.5">
-                      {formatCurrency(prog.collected)}
-                    </p>
                   </div>
-                  <a
-                    href="https://amanahzakat.id"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 w-full block text-center bg-[#c9a227] hover:bg-yellow-600 text-white text-sm font-bold py-2.5 rounded-lg transition-colors"
-                  >
-                    Donasi Sekarang
-                  </a>
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="text-gray-900 font-bold text-sm leading-snug font-serif line-clamp-2 h-10 group-hover:text-[#c9a227] transition-colors">
+                      {prog.title}
+                    </h3>
+                    <p className="text-gray-500 text-[11px] mt-2 line-clamp-2 leading-relaxed flex-1">
+                      {prog.description}
+                    </p>
+                    {/* Progress bar */}
+                    <div className="mt-4">
+                      <div className="flex justify-between text-[10px] text-gray-500 mb-1.5 font-medium">
+                        <span>Terkumpul {pct}%</span>
+                        <span>{formatCurrency(prog.target)}</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
+                        <div
+                          className="bg-gradient-to-r from-[#c9a227] to-[#e4bc3c] h-1.5 rounded-full transition-all duration-1000"
+                          style={{ width: `${pct}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-[#1a4731] font-bold text-sm">
+                        {formatCurrency(prog.collected)}
+                      </p>
+                    </div>
+                    <a
+                      href={prog.donationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 w-full block text-center bg-white hover:bg-[#c9a227] border border-[#c9a227] text-[#c9a227] hover:text-white text-[11px] font-bold py-2 rounded-lg transition-all"
+                    >
+                      Donasi Sekarang
+                    </a>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );

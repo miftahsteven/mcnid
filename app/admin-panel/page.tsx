@@ -4,13 +4,25 @@ import { cookies } from 'next/headers';
 import {
   Newspaper, Video, GraduationCap, Heart, Users,
   Eye, TrendingUp, ArrowUpRight, Clock, Plus,
-  MessageSquare, BarChart2, Activity, Flame
+  MessageSquare, BarChart2, Activity, Flame,
+  Award, Trophy, Zap
 } from 'lucide-react';
 import { newsArticles, formatNumber, formatDate } from '@/lib/dummy-data';
+import RealtimeVisitorsCard from '@/components/admin/RealtimeVisitorsCard';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
+
+interface RecentContent {
+  id: string;
+  title: string;
+  image: string;
+  category: string;
+  publishedAt: string;
+  views: number;
+  type: 'post' | 'video';
+}
 
 async function getDashboardStats() {
   try {
@@ -22,7 +34,7 @@ async function getDashboardStats() {
       headers: { 'Authorization': `Bearer ${token}` },
       cache: 'no-store'
     });
-    
+
     if (!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -32,16 +44,59 @@ async function getDashboardStats() {
   }
 }
 
+async function getRecentContent(): Promise<RecentContent[]> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    if (!token) return [];
 
-const recentPosts = newsArticles.slice(0, 5);
-const recentComments = [
-  { author: 'Budi Santoso', content: 'Artikel yang sangat informatif, terima kasih...', post: 'KH Cholil Nafis Pimpin Rapat...', time: '5 menit lalu', avatar: 'BS' },
-  { author: 'Siti Aminah', content: 'Semoga program ini bisa terus berlanjut...', post: 'Zakat Produktif Menjadi Solusi...', time: '23 menit lalu', avatar: 'SA' },
-  { author: 'Ahmad Fauzi', content: 'Mohon penjelasan lebih lanjut...', post: 'Fatwa MUI Terbaru: Investasi Kripto...', time: '1 jam lalu', avatar: 'AF' },
-];
+    const res = await fetch(`${BACKEND_URL}/api/admin/dashboard/recent-content`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      cache: 'no-store'
+    });
+
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error('Error fetching recent content:', err);
+    return [];
+  }
+}
+
+interface AuthorReport {
+  id: string;
+  name: string;
+  image?: string;
+  totalContent: number;
+  totalViews: number;
+  role: string;
+}
+
+async function getAuthorsReport(): Promise<AuthorReport[]> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('admin_token')?.value;
+    if (!token) return [];
+
+    const res = await fetch(`${BACKEND_URL}/api/admin/dashboard/authors-report`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      cache: 'no-store'
+    });
+
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error('Error fetching authors report:', err);
+    return [];
+  }
+}
 
 export default async function AdminDashboard() {
   const statsData = await getDashboardStats();
+  const recentPosts = await getRecentContent();
+  const authorsReport = await getAuthorsReport();
 
   const stats = [
     { label: 'Total News', value: statsData ? formatNumber(statsData.totalNews) : '0', change: 'Semua Kategori', icon: Newspaper, color: 'bg-blue-500', href: '/admin-panel/posts' },
@@ -70,27 +125,32 @@ export default async function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {stats.map((stat) => (
-          <Link
-            key={stat.label}
-            href={stat.href}
-            className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#1a4731]/30 hover:shadow-md transition-all group"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1 font-serif">{stat.value}</p>
-                <p className="text-xs text-green-600 mt-1 flex items-center gap-1 font-medium">
-                  <TrendingUp size={11} /> {stat.change}
-                </p>
+        {stats.map((stat) => {
+          if (stat.label === 'Total Online Realtime') {
+            return <RealtimeVisitorsCard key={stat.label} initialValue={statsData?.onlineRealtime || 0} />;
+          }
+          return (
+            <Link
+              key={stat.label}
+              href={stat.href}
+              className="bg-white rounded-xl p-4 border border-gray-200 hover:border-[#1a4731]/30 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1 font-serif">{stat.value}</p>
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1 font-medium">
+                    <TrendingUp size={11} /> {stat.change}
+                  </p>
+                </div>
+                <div className={`${stat.color} w-10 h-10 rounded-xl flex items-center justify-center bg-opacity-10 group-hover:scale-110 transition-transform`}
+                  style={{ backgroundColor: `${stat.color.replace('bg-', '')}20` }}>
+                  <stat.icon size={20} className={stat.color.replace('bg-', 'text-')} />
+                </div>
               </div>
-              <div className={`${stat.color} w-10 h-10 rounded-xl flex items-center justify-center bg-opacity-10 group-hover:scale-110 transition-transform`}
-                style={{ backgroundColor: `${stat.color.replace('bg-', '')}20` }}>
-                <stat.icon size={20} className={stat.color.replace('bg-', 'text-')} />
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Main content: Recent Posts + Quick Actions */}
@@ -99,13 +159,13 @@ export default async function AdminDashboard() {
         {/* Recent Posts */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-            <h2 className="font-bold text-gray-900 text-sm">Artikel Terbaru</h2>
+            <h2 className="font-bold text-gray-900 text-sm">Konten Terbaru</h2>
             <Link href="/admin-panel/posts" className="text-xs text-[#1a4731] font-semibold hover:underline flex items-center gap-1">
               Lihat Semua <ArrowUpRight size={12} />
             </Link>
           </div>
           <div className="divide-y divide-gray-50">
-            {recentPosts.map((post) => (
+            {recentPosts.slice(0, 8).map((post) => (
               <div key={post.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors">
                 <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
@@ -152,27 +212,59 @@ export default async function AdminDashboard() {
             </div>
           </div>
 
-          {/* Recent Comments */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex-1">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-              <h2 className="font-bold text-gray-900 text-sm flex items-center gap-2">
-                <MessageSquare size={14} className="text-gray-400" /> Komentar Terbaru
+          {/* Authors Leaderboard */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex-1 shadow-sm">
+            <div className="bg-gradient-to-r from-[#1a4731] to-[#2d6b4a] px-4 py-4">
+              <h2 className="font-bold text-white text-sm flex items-center gap-2">
+                <Trophy size={16} className="text-yellow-400" /> Peringkat Penulis Teraktif
               </h2>
+              <p className="text-[10px] text-gray-200 mt-1">Partisipasi aktif di mcnid</p>
             </div>
-            <div className="divide-y divide-gray-50">
-              {recentComments.map((c, i) => (
-                <div key={i} className="px-4 py-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-6 h-6 rounded-full bg-[#1a4731] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
-                      {c.avatar}
-                    </div>
-                    <span className="text-xs font-semibold text-gray-900">{c.author}</span>
-                    <span className="text-[10px] text-gray-400 ml-auto">{c.time}</span>
-                  </div>
-                  <p className="text-xs text-gray-600 line-clamp-1 ml-8">{c.content}</p>
-                  <p className="text-[10px] text-[#1a4731] ml-8 mt-0.5 truncate">{c.post}</p>
+            <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
+              {authorsReport.length === 0 ? (
+                <div className="p-10 text-center text-gray-400 text-xs italic">
+                  Belum ada data partisipasi penulis.
                 </div>
-              ))}
+              ) : (
+                authorsReport.map((author, i) => (
+                  <div key={author.id} className="px-4 py-3 hover:bg-gray-50 transition-colors group relative">
+                    <div className="flex items-center gap-3">
+                      {/* Rank Number / Badge */}
+                      <div className="w-6 shrink-0 flex justify-center">
+                        {i === 0 ? (
+                          <Award size={18} className="text-yellow-500" />
+                        ) : i === 1 ? (
+                          <Award size={18} className="text-gray-400" />
+                        ) : i === 2 ? (
+                          <Award size={18} className="text-amber-600" />
+                        ) : (
+                          <span className="text-xs font-bold text-gray-300">#{i + 1}</span>
+                        )}
+                      </div>
+
+                      {/* Author Info */}
+                      <div className="w-8 h-8 rounded-full bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                        {author.image ? (
+                          <img src={author.image} alt={author.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-[#1a4731]">
+                            {author.name.substring(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-gray-900 truncate">{author.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-gray-500">
+                          <span className="flex items-center gap-0.5"><Zap size={10} className="text-orange-500" /> {author.totalContent} Konten</span>
+                          <span className="flex items-center gap-1">•</span>
+                          <span className="flex items-center gap-0.5"><Eye size={10} className="text-blue-500" /> {formatNumber(author.totalViews)} Views</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
