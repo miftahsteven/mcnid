@@ -12,14 +12,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const formData = await request.formData();
-
     const res = await fetch(`${BACKEND_URL}/api/media/upload-pdf`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
+        'Content-Type': request.headers.get('content-type') || 'multipart/form-data',
       },
-      body: formData,
+      // @ts-ignore - duplex is required for streaming bodies in some environments
+      duplex: 'half',
+      body: request.body,
       cache: 'no-store'
     });
 

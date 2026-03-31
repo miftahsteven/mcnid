@@ -41,10 +41,10 @@ export default async function HomePage() {
   let latestPostsItems: HighlightItem[] = [];
   let latestVideosItems: any[] = [];
   let trending: any[] = [];
-  
+
   try {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    
+
 
     // Fetch highlights, latest mixed, latest pure posts, latest videos, and trending in parallel
     const [hlRes, latestRes, lpRes, lvRes, trendRes] = await Promise.all([
@@ -60,7 +60,7 @@ export default async function HomePage() {
     if (lpRes.ok) latestPostsItems = (await lpRes.json()).data || [];
     if (lvRes.ok) latestVideosItems = (await lvRes.json()).data || [];
     if (trendRes.ok) trending = (await trendRes.json()).data || [];
-    
+
   } catch (err) {
     console.error("Failed to fetch public api data:", err);
   }
@@ -72,7 +72,7 @@ export default async function HomePage() {
   const usedIds = new Set(latestItems.map(item => item.id));
   const beritaTerkini = latestPostsItems.filter(item => !usedIds.has(item.id)).slice(0, 6);
 
-    
+
   // MCN Play API Logic
   const validVideos = latestVideosItems.length > 0 ? latestVideosItems : videos;
   const featuredVideo = validVideos[0];
@@ -91,7 +91,7 @@ export default async function HomePage() {
           <div className="flex flex-col justify-between h-full gap-3 overflow-hidden">
             {latestItems.map((article) => {
               const imageUrl = getPublicImageUrl(article.image);
-                
+
               return (
                 <Link
                   key={article.id}
@@ -158,7 +158,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {beritaTerkini.map((article) => {
                 const imageUrl = getPublicImageUrl(article.image);
-                  
+
                 return (
                   <Link
                     key={article.id}
@@ -287,7 +287,7 @@ export default async function HomePage() {
               <span className="group-hover:underline underline-offset-4">Lihat Semua Kumpulan Video</span> <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Featured video */}
             <div className="lg:col-span-7 xl:col-span-8">
@@ -300,14 +300,14 @@ export default async function HomePage() {
                   alt={featuredVideo.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 />
-                
+
                 {/* Dark gradient mapping from bottom up */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-6 md:p-8">
                   {/* Category Badge positioned absolutely at top */}
                   <div className="absolute top-5 left-5 bg-red-600 text-white text-[10px] font-bold px-3 py-1.5 rounded uppercase tracking-widest shadow-lg">
                     {featuredVideo.category || "MCN Play"}
                   </div>
-                  
+
                   {/* Play Button Center Overlay */}
                   <div
                     className="play-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
@@ -319,7 +319,7 @@ export default async function HomePage() {
                       className="text-[#1a4731] ml-1.5"
                     />
                   </div>
-                  
+
                   <div className="relative z-10">
                     <h3 className="text-white font-bold text-xl md:text-3xl font-serif line-clamp-2 leading-tight drop-shadow-md group-hover:text-red-400 transition-colors">
                       {featuredVideo.title}
@@ -532,9 +532,9 @@ export default async function HomePage() {
             <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-lg mx-auto">
               Saat ini data ZIS Network sedang dalam pembaharuan sistem. Anda dapat melihat program donasi dan menyalurkan zakat secara langsung melalui portal utama mitra kami di <strong>amanahzakat.id</strong>.
             </p>
-            <a 
-              href="https://amanahzakat.id" 
-              target="_blank" 
+            <a
+              href="https://amanahzakat.id"
+              target="_blank"
               rel="noopener noreferrer"
               className="mt-8 inline-flex items-center gap-3 bg-[#c9a227] hover:bg-yellow-600 text-white font-bold py-3.5 px-10 rounded-full transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
             >
@@ -557,7 +557,7 @@ export default async function HomePage() {
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-2 left-2">
-                       <span className="text-[9px] uppercase tracking-wider font-bold text-white bg-[#c9a227] px-2 py-0.5 rounded shadow-sm">
+                      <span className="text-[9px] uppercase tracking-wider font-bold text-white bg-[#c9a227] px-2 py-0.5 rounded shadow-sm">
                         {prog.category}
                       </span>
                     </div>
