@@ -4,14 +4,43 @@ import { Play, Eye, Clock, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { formatNumber, formatDate } from "@/lib/dummy-data";
 import { getPublicImageUrl } from "@/lib/backend-config";
 
-interface VideoCardProps {
-  video: any;
-  onPlay: (video: any) => void;
+interface VideoAuthor {
+  id: string;
+  name: string;
+  avatar?: string;
 }
 
+interface VideoCategoryRelation {
+  category: {
+    id: string;
+    name: string;
+  };
+}
+
+interface VideoData {
+  id: string | number;
+  title: string;
+  description?: string;
+  coverImage: string;
+  videoUrl: string;
+  duration?: string;
+  viewCount: number;
+  likeCount: number;
+  dislikeCount: number;
+  publishedAt: string;
+  author: VideoAuthor;
+  categories: VideoCategoryRelation[];
+}
+
+interface VideoCardProps {
+  video: VideoData;
+  onPlay: (video: VideoData) => void;
+}
+
+
 export default function VideoCard({ video, onPlay }: VideoCardProps) {
-  const [likes, setLikes] = useState(video.likeCount || 0);
-  const [dislikes, setDislikes] = useState(video.dislikeCount || 0);
+  const [likes, setLikes] = useState<number>(video.likeCount || 0);
+  const [dislikes, setDislikes] = useState<number>(video.dislikeCount || 0);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
 
