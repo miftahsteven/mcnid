@@ -70,16 +70,21 @@ export async function generateMetadata({
 
   const imageUrl = getPublicImageUrl(video.coverImage || video.thumbnail);
 
+  const canonicalUrl = `https://mcnid.net/mcn-play/${video.slug}`;
+
   return {
     title: `${video.title} | MCN Play`,
     description: video.description?.substring(0, 160).replace(/<[^>]*>?/gm, ""),
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: video.title,
       description: video.description
         ?.substring(0, 160)
         .replace(/<[^>]*>?/gm, ""),
-      url: `/mcn-play/${video.slug}`,
-      siteName: "MCN",
+      url: canonicalUrl,
+      siteName: "MCNID.NET",
       images: [
         {
           url: imageUrl,
@@ -89,6 +94,7 @@ export async function generateMetadata({
         },
       ],
       type: "video.movie",
+      locale: "id_ID",
     },
     twitter: {
       card: "player",
@@ -126,6 +132,7 @@ export default async function MCNPlayDetailPage({
   }
 
   const latestVideos = await getLatestVideos(video.id);
+  const imageUrl = getPublicImageUrl(video.coverImage || video.thumbnail);
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://mcnid.net"}/mcn-play/${video.slug}`;
 
   // Render Video Player
@@ -135,8 +142,46 @@ export default async function MCNPlayDetailPage({
       : null;
   const isDirectVideo = video.sourceType === "UPLOAD" && video.videoUrl;
 
+  // ── JSON-LD Structured Data (VideoObject) ────────────────────────────
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: video.title,
+    description: video.description?.replace(/<[^>]*>?/gm, "") || video.title,
+    thumbnailUrl: [imageUrl],
+    uploadDate: video.publishedAt || video.createdAt,
+    duration: video.duration || undefined,
+    contentUrl:
+      video.sourceType === "UPLOAD" && video.videoUrl
+        ? `${API_URL}${video.videoUrl}`
+        : undefined,
+    embedUrl:
+      video.sourceType === "YOUTUBE" && video.videoUrl
+        ? `https://www.youtube.com/embed/${video.videoUrl.match(/(?:v=|\/embed\/|youtu\.be\/)([^&?#]+)/)?.[1] || ""}`
+        : undefined,
+    author: {
+      "@type": "Person",
+      name: video.author?.name || "MCN Play",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "MCNID.NET",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://mcnid.net/logomcnid.jpeg",
+      },
+    },
+    url: `https://mcnid.net/mcn-play/${video.slug}`,
+    inLanguage: "id-ID",
+  };
+
   return (
     <div className="bg-[#0b1912] min-h-screen pb-16 text-gray-200">
+      {/* JSON-LD for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Silent view tracker */}
       <ViewTracker type="video" slug={video.slug} />
 

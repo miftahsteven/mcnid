@@ -1,6 +1,32 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { BookOpen, Eye, Clock, Share2 } from 'lucide-react';
 import { opinArticles, formatDate, formatNumber } from '@/lib/dummy-data';
+
+export const metadata: Metadata = {
+  title: 'Opini | MCNID.NET',
+  description:
+    'Perspektif dan gagasan dari ulama, akademisi, dan tokoh Islam Indonesia. Kolom opini moderat dari MCNID.NET.',
+  alternates: {
+    canonical: 'https://mcnid.net/opini',
+  },
+  openGraph: {
+    title: 'Opini — Perspektif Islam Moderat | MCNID.NET',
+    description:
+      'Perspektif dan gagasan dari ulama, akademisi, dan tokoh Islam Indonesia.',
+    url: 'https://mcnid.net/opini',
+    siteName: 'MCNID.NET',
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Opini | MCNID.NET',
+    description:
+      'Perspektif dan gagasan dari ulama, akademisi, dan tokoh Islam Indonesia.',
+  },
+};
+
 
 export default function OpiniPage() {
   const featured = opinArticles[0];

@@ -109,18 +109,24 @@ export async function generateMetadata({
   const description =
     post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>?/gm, "");
 
+  const canonicalUrl = `https://mcnid.net/berita/${post.slug}`;
+
   return {
     title: `${post.title} | MCN`,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: post.title,
       description,
-      url: `/berita/${post.slug}`,
-      siteName: "MCN",
+      url: canonicalUrl,
+      siteName: "MCNID.NET",
       images: [{ url: imageUrl, width: 1200, height: 630, alt: post.title }],
       type: "article",
       publishedTime: post.publishedAt || post.createdAt,
       authors: [post.author?.name || "MCN Redaksi"],
+      locale: "id_ID",
     },
     twitter: {
       card: "summary_large_image",
@@ -151,8 +157,51 @@ export default async function BeritaDetailPage({
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://mcnid.net"}/berita/${post.slug}`;
   const publishDate = new Date(post.publishedAt || post.createdAt);
 
+  // ── JSON-LD Structured Data (NewsArticle) ──────────────────────────────
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: post.title,
+    description:
+      post.excerpt ||
+      post.content?.substring(0, 160).replace(/<[^>]*>?/gm, ""),
+    image: [imageUrl],
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt || post.publishedAt || post.createdAt,
+    author: [
+      {
+        "@type": "Person",
+        name: post.customAuthor || post.author?.name || "Redaksi MCN",
+      },
+    ],
+    publisher: {
+      "@type": "Organization",
+      name: "MCNID.NET",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://mcnid.net/logomcnid.jpeg",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://mcnid.net/berita/${post.slug}`,
+    },
+    url: `https://mcnid.net/berita/${post.slug}`,
+    inLanguage: "id-ID",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "MCNID.NET",
+      url: "https://mcnid.net",
+    },
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen">
+      {/* JSON-LD for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ViewTracker type="post" slug={post.slug} />
 
       {/* Hero Cover */}

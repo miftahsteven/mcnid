@@ -5,8 +5,27 @@ import { getZisPrograms } from "@/lib/zis-api";
 import { formatCurrency, calcProgress } from "@/lib/dummy-data";
 
 export const metadata = {
-  title: "ZIS Network - MCNID",
-  description: "Program penghimpunan dan penyaluran Zakat, Infaq, dan Sedekah bekerjasama dengan amanahzakat.id",
+  title: 'ZIS Network — Zakat, Infaq & Sedekah | MCNID.NET',
+  description:
+    'Program penghimpunan dan penyaluran Zakat, Infaq, dan Sedekah yang transparan, bekerjasama dengan Amanah Zakat. Bantu sesama melalui ZIS Network MCNID.NET.',
+  alternates: {
+    canonical: 'https://mcnid.net/zis-network',
+  },
+  openGraph: {
+    title: 'ZIS Network — Donasi & ZIS Transparan | MCNID.NET',
+    description:
+      'Program ZIS yang transparan bersama Amanah Zakat. Bantu sesama melalui ZIS Network MCNID.NET.',
+    url: 'https://mcnid.net/zis-network',
+    siteName: 'MCNID.NET',
+    locale: 'id_ID',
+    type: 'website',
+    images: [{ url: '/logomcnid.jpeg', width: 1200, height: 630, alt: 'ZIS Network MCN' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ZIS Network | MCNID.NET',
+    description: 'Program ZIS transparan bersama Amanah Zakat.',
+  },
 };
 
 export default async function ZisNetworkPage() {
