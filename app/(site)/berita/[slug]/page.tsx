@@ -102,9 +102,7 @@ export async function generateMetadata({
 
   if (!post) return { title: "Not Found - MCN" };
 
-    const imageUrl = post.coverImage?.startsWith("http")
-    ? post.coverImage.replace(/^http:/, "https:")
-    : `${PUBLIC_API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
+    const imageUrl = getPublicImageUrl(post.coverImage);
 
   const description =
     post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>?/gm, "");
@@ -150,9 +148,7 @@ export default async function BeritaDetailPage({
   }
 
   const latestPosts = await getLatestPosts(post.id);
-  const imageUrl = post.coverImage?.startsWith("http")
-    ? post.coverImage.replace(/^http:/, "https:")
-    : `${PUBLIC_API_URL}${post.coverImage || "/placeholder-news.jpg"}`;
+  const imageUrl = getPublicImageUrl(post.coverImage);
 
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://mcnid.net"}/berita/${post.slug}`;
   const publishDate = new Date(post.publishedAt || post.createdAt);
@@ -348,9 +344,7 @@ export default async function BeritaDetailPage({
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {latestPosts.map((related: any) => {
-              const relImg = related.coverImage?.startsWith("http")
-                ? related.coverImage.replace(/^http:/, "https:")
-                : `${PUBLIC_API_URL}${related.coverImage || "/placeholder-news.jpg"}`;
+              const relImg = getPublicImageUrl(related.image || related.coverImage);
               return (
                 <Link
                   key={related.id}
