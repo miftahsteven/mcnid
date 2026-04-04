@@ -535,7 +535,8 @@ export default function KonsultasiClient() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKey}
                   disabled={isLimitReached || loading || isBlocked}
-                  placeholder={isBlocked ? "Akses diblokir" : isLimitReached ? "Kouta harian Anda sudah habis" : "Tanyakan sesuatu..."}
+                  maxLength={500}
+                  placeholder={isBlocked ? "Akses diblokir" : isLimitReached ? "Kouta harian Anda sudah habis" : "Tanyakan sesuatu (Maks. 500 karakter)..."}
                   rows={1}
                   className="flex-1 px-5 py-2.5 text-[14px] bg-transparent focus:outline-none resize-none min-h-[44px]"
                   style={{ maxHeight: '160px' }}
@@ -549,7 +550,14 @@ export default function KonsultasiClient() {
                 </button>
               </div>
               <div className="flex items-center justify-between mt-3 px-4">
-                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em]">KI.AI Platform Gratis</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em]">KI.AI Platform Gratis</p>
+                  {!isBlocked && !isLimitReached && (
+                    <p className={`text-[9px] font-bold uppercase tracking-[0.2em] ${input.length >= 500 ? 'text-red-500' : 'text-gray-400'} border-l border-gray-200 pl-3`}>
+                      {input.length}/500 Karakter
+                    </p>
+                  )}
+                </div>
                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em]">{dailyUsage}/5 Kuota Harian</p>
               </div>
             </div>
