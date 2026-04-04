@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, RefreshCw, ChevronRight, History, Info, Menu, X, Plus, ThumbsUp, ThumbsDown, Check } from 'lucide-react';
 import { auth, googleProvider } from '../../../lib/firebase';
-import { signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, onAuthStateChanged, User } from 'firebase/auth';
 
 interface Message {
   id: number;
@@ -104,8 +104,16 @@ export default function KonsultasiClient() {
   };
 
   const loginWithGoogle = async () => {
-    try { await signInWithPopup(auth, googleProvider); }
-    catch (error) { alert("Gagal memanggil Google Login."); }
+    try { 
+      await signInWithPopup(auth, googleProvider); 
+    } catch (error: any) { 
+      console.warn("Popup login failed, mencoba dialihkan (redirect)...", error.message);
+      try {
+        await signInWithRedirect(auth, googleProvider);
+      } catch (redirectError: any) {
+        alert("Gagal memanggil Google Login: " + redirectError.message); 
+      }
+    }
   };
 
   const continueSession = async (sessionData: SessionData) => {
