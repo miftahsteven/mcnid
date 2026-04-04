@@ -104,14 +104,14 @@ export default function KonsultasiClient() {
   };
 
   const loginWithGoogle = async () => {
-    try { 
-      await signInWithPopup(auth, googleProvider); 
-    } catch (error: any) { 
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error: any) {
       console.warn("Popup login failed, mencoba dialihkan (redirect)...", error.message);
       try {
         await signInWithRedirect(auth, googleProvider);
       } catch (redirectError: any) {
-        alert("Gagal memanggil Google Login: " + redirectError.message); 
+        alert("Gagal memanggil Google Login: " + redirectError.message);
       }
     }
   };
@@ -390,7 +390,7 @@ export default function KonsultasiClient() {
                 <Menu size={24} />
               </button>
               <h1 className="font-bold text-gray-800 font-serif hidden lg:block">Panel Konsultasi</h1>
-              <h1 className="font-bold text-gray-800 font-serif lg:hidden">KI.AI</h1>
+              <h1 className="font-bold text-gray-800 font-serif lg:hidden">KI.AI v1.2</h1>
             </div>
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex flex-col items-end">
