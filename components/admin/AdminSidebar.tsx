@@ -18,6 +18,7 @@ import {
   Image,
   Tag,
   MessageSquare,
+  Bot,
   X,
   Menu,
 } from "lucide-react";
@@ -80,10 +81,13 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    label: "Komentar",
-    href: "/admin-panel/comments",
-    icon: MessageSquare,
+    label: "Ki.ai Data",
+    icon: Bot,
     allowedRoles: ["SUPER_ADMIN", "ADMIN"],
+    children: [
+      { label: "Data Ki.ai", href: "/admin-panel/ki-ai-data" },
+      { label: "Data Pertanyaan", href: "/admin-panel/ki-ai-data/questions" },
+    ],
   },
   {
     label: "Media Monitoring",
@@ -182,11 +186,10 @@ export default function AdminSidebar() {
                 key={item.href}
                 href={item.href!}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 text-sm font-medium transition-all ${
-                  isActive(item.href!)
-                    ? "bg-[#2d6b4a] text-white"
-                    : "text-gray-300 hover:bg-white/10 hover:text-white"
-                }`}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 text-sm font-medium transition-all ${isActive(item.href!)
+                  ? "bg-[#2d6b4a] text-white"
+                  : "text-gray-300 hover:bg-white/10 hover:text-white"
+                  }`}
               >
                 <item.icon size={16} />
                 {item.label}
@@ -201,11 +204,10 @@ export default function AdminSidebar() {
             <div key={item.label} className="mb-0.5">
               <button
                 onClick={() => toggleGroup(item.label)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  groupActive
-                    ? "text-white bg-white/10"
-                    : "text-gray-300 hover:bg-white/10 hover:text-white"
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${groupActive
+                  ? "text-white bg-white/10"
+                  : "text-gray-300 hover:bg-white/10 hover:text-white"
+                  }`}
               >
                 <item.icon size={16} />
                 <span className="flex-1 text-left">{item.label}</span>
@@ -222,11 +224,10 @@ export default function AdminSidebar() {
                       key={child.href}
                       href={child.href}
                       onClick={() => setMobileOpen(false)}
-                      className={`block px-2 py-1.5 text-xs rounded-md transition-all ${
-                        isActive(child.href)
-                          ? "text-white font-semibold"
-                          : "text-gray-400 hover:text-white hover:bg-white/10"
-                      }`}
+                      className={`block px-2 py-1.5 text-xs rounded-md transition-all ${isActive(child.href)
+                        ? "text-white font-semibold"
+                        : "text-gray-400 hover:text-white hover:bg-white/10"
+                        }`}
                     >
                       {child.label}
                     </Link>
