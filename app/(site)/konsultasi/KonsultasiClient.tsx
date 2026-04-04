@@ -472,7 +472,7 @@ export default function KonsultasiClient() {
                         </p>
 
                         {msg.role === 'ai' && msg.chatId && (
-                          <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => handleFeedback(msg.chatId, true)}
                               className={`p-1.5 rounded-lg transition-all ${msg.feedback === true ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
