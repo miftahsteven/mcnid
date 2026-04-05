@@ -15,25 +15,27 @@ export const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 
 /**
  * Normalizes an image path or full URL.
- * Replaces localhost:4000 with the actual production API URL to avoid Mixed Content errors.
+ * Ensures that images pointing to our API are always loaded over HTTPS to avoid Mixed Content errors.
  */
 export function getPublicImageUrl(path: string | null | undefined): string {
   if (!path) return "/placeholder-news.jpg";
 
-  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.mcnid.net";
   
-  // 1. If it's already a full URL pointing to localhost:4000, swap it
-  if (path.includes("localhost:4000")) {
-    return path.replace(/http:\/\/localhost:4000/g, publicApiUrl);
+  // 1. If it's already a full URL pointing to localhost:4000 or http://api.mcnid.net
+  // we normalize it to the official public API URL (which should be HTTPS in production)
+  if (path.includes("localhost:4000") || path.includes("http://api.mcnid.net")) {
+    return path.replace(/http:\/\/localhost:4000/g, publicApiUrl)
+               .replace(/http:\/\/api\.mcnid\.net/g, publicApiUrl);
   }
 
-  // 2. If it's another absolute URL (e.g. S3, external site), return as is
-  if (path.startsWith("http")) {
-    return path;
+  // 2. If it's a relative path, prefix it with the public API URL
+  if (!path.startsWith("http")) {
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    return `${publicApiUrl}${cleanPath}`;
   }
 
-  // 3. If it's a relative path, prefix it
-  // Ensure we don't have double slashes
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `${publicApiUrl}${cleanPath}`;
+  // 3. If it's another absolute URL (S3, external site), return as is
+  // But still try to upgrade to https if it's our domain just in case of edge cases
+  return path.replace("http://api.mcnid.net", "https://api.mcnid.net");
 }
