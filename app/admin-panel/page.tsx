@@ -11,6 +11,7 @@ import { newsArticles, formatNumber, formatDate } from '@/lib/dummy-data';
 import RealtimeVisitorsCard from '@/components/admin/RealtimeVisitorsCard';
 
 export const metadata: Metadata = { title: 'Dashboard' };
+export const dynamic = "force-dynamic";
 
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
 
