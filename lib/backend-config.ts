@@ -32,12 +32,12 @@ export function getPublicImageUrl(path: string | null | undefined): string {
     baseUrl = baseUrl.slice(0, -7);
   }
 
-  // 1. If it's already a full URL pointing to any localhost or http domain
-  // we normalize it to our cleaned base URL
-  if (path.includes("localhost:") || path.includes("http://api.mcnid.net")) {
-    return path.replace(/http:\/\/localhost:\d+/g, baseUrl)
-               .replace(/http:\/\/api\.mcnid\.net/g, baseUrl)
-               .replace("/public/uploads/", "/uploads/"); // Fix cases where it might already have /public
+  // 1. If it's already a full URL pointing to any localhost or our api domain
+  // we normalize it to our cleaned base URL and ensure /public is stripped
+  if (path.includes("localhost:") || path.includes("api.mcnid.net")) {
+    return path.replace(/https?:\/\/localhost:\d+/g, baseUrl)
+               .replace(/https?:\/\/api\.mcnid\.net/g, baseUrl)
+               .replace("/public/uploads/", "/uploads/");
   }
 
   // 2. If it's a relative path, prefix it with the cleaned base URL
@@ -46,7 +46,8 @@ export function getPublicImageUrl(path: string | null | undefined): string {
     return `${baseUrl}${cleanPath}`;
   }
 
-  // 3. For any other URL, ensure https for our domain and fix /public if present
-  return path.replace("http://api.mcnid.net", "https://api.mcnid.net")
+  // 3. For any other absolute URL, check if it's our domain (case where it didn't match step 1)
+  // and fix https/public issues
+  return path.replace(/http:\/\/api\.mcnid\.net/g, "https://api.mcnid.net")
              .replace("/public/uploads/", "/uploads/");
 }
