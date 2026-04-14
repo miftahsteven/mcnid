@@ -202,14 +202,14 @@ export default async function BeritaDetailPage({
 
       {/* Hero Cover */}
       <div className="w-full bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-lg border border-gray-100">
+        <div className="max-w-5xl mx-auto px-0 md:px-4 mt-0 md:mt-4">
+          <div className="relative w-full aspect-video sm:aspect-video lg:max-h-[550px] overflow-hidden md:rounded-2xl shadow-sm md:shadow-lg border-b md:border border-gray-100 bg-gray-900">
             <img
               src={getPublicImageUrl(post.coverImage)}
               alt={post.title}
-              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              className="h-full w-full object-contain md:object-cover transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
       </div>
