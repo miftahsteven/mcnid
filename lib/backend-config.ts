@@ -6,9 +6,9 @@
  * 2. NEXT_PUBLIC_API_URL (fallback — converts http to https for safety)
  * 3. http://localhost:4000 (last resort for local dev)
  */
-export const BACKEND_URL = 
-  process.env.BACKEND_URL || 
-  process.env.NEXT_PUBLIC_API_URL || 
+export const BACKEND_URL =
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
   'http://localhost:4000';
 
 export const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
@@ -25,19 +25,21 @@ export function getPublicImageUrl(path: string | null | undefined): string {
   // 2. NEXT_PUBLIC_API_URL
   // 3. Fallback to production
   const rawBaseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || process.env.NEXT_PUBLIC_API_URL || "https://api.mcnid.net";
-  
-  // Clean the base URL (strip trailing slash and /public suffix)
+
+  // Clean the base URL (strip trailing slash and /public or /uploads suffix)
   let baseUrl = rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
   if (baseUrl.endsWith('/public')) {
     baseUrl = baseUrl.slice(0, -7);
+  } else if (baseUrl.endsWith('/uploads')) {
+    baseUrl = baseUrl.slice(0, -8);
   }
 
   // 1. If it's already a full URL pointing to any localhost or our api domain
   // we normalize it to our cleaned base URL and ensure /public is stripped
   if (path.includes("localhost:") || path.includes("api.mcnid.net")) {
     return path.replace(/https?:\/\/localhost:\d+/g, baseUrl)
-               .replace(/https?:\/\/api\.mcnid\.net/g, baseUrl)
-               .replace("/public/uploads/", "/uploads/");
+      .replace(/https?:\/\/api\.mcnid\.net/g, baseUrl)
+      .replace("/public/uploads/", "/uploads/");
   }
 
   // 2. If it's a relative path, prefix it with the cleaned base URL
@@ -51,5 +53,5 @@ export function getPublicImageUrl(path: string | null | undefined): string {
   // 3. For any other absolute URL, check if it's our domain (case where it didn't match step 1)
   // and fix https/public issues
   return path.replace(/http:\/\/api\.mcnid\.net/g, "https://api.mcnid.net")
-             .replace("/public/uploads/", "/uploads/");
+    .replace("/public/uploads/", "/uploads/");
 }
