@@ -43,7 +43,9 @@ export function getPublicImageUrl(path: string | null | undefined): string {
   // 2. If it's a relative path, prefix it with the cleaned base URL
   if (!path.startsWith("http")) {
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    return `${baseUrl}${cleanPath}`;
+    // Ensure we strip /public if the relative path contains it
+    const finalCleanPath = cleanPath.replace("/public/uploads/", "/uploads/");
+    return `${baseUrl}${finalCleanPath}`;
   }
 
   // 3. For any other absolute URL, check if it's our domain (case where it didn't match step 1)
