@@ -5,6 +5,7 @@ import { Clock, Eye, ChevronRight, User, Tag } from "lucide-react";
 import { notFound } from "next/navigation";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "@/components/ViewTracker";
+import ZisBanner from "@/components/ZisBanner";
 
 // Server-side: use BACKEND_URL for internal SSR fetching (correct port on production)
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -200,8 +201,11 @@ export default async function BeritaDetailPage({
       />
       <ViewTracker type="post" slug={post.slug} />
 
-      {/* Main article wrapper */}
-      <div className="max-w-[760px] mx-auto px-4 md:px-8 py-6 md:py-10 bg-white md:rounded-2xl shadow-sm md:shadow-md border border-gray-100">
+      {/* Layout Wrapper for Article & Sidebar */}
+      <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row lg:items-start lg:justify-center px-0 md:px-4 gap-6">
+        
+        {/* Main article wrapper */}
+        <div className="flex-1 max-w-[760px] w-full px-4 md:px-8 py-6 md:py-10 bg-white md:rounded-2xl shadow-sm md:shadow-md border border-gray-100">
         {/* Breadcrumb */}
         <nav className="flex items-center text-xs text-gray-500 pb-5 font-medium mb-2 border-b border-gray-100">
           <Link href="/" className="hover:text-[#1a4731] transition-colors">
@@ -322,6 +326,13 @@ export default async function BeritaDetailPage({
 
         {/* Share */}
         <ShareButtons title={post.title} url={shareUrl} />
+        </div>
+
+        {/* Sidebar Banner */}
+        <aside className="w-full lg:w-[320px] shrink-0 px-4 md:px-0 lg:sticky lg:top-24 self-start mb-8 lg:mb-0">
+          <ZisBanner />
+        </aside>
+
       </div>
 
       {/* "Berita Lainnya" Section */}
