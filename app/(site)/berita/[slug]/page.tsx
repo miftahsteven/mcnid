@@ -192,7 +192,7 @@ export default async function BeritaDetailPage({
   };
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50 min-h-screen pt-0 md:pt-6 pb-12">
       {/* JSON-LD for Google Rich Results */}
       <script
         type="application/ld+json"
@@ -200,25 +200,10 @@ export default async function BeritaDetailPage({
       />
       <ViewTracker type="post" slug={post.slug} />
 
-      {/* Hero Cover */}
-      <div className="w-full bg-white">
-        <div className="max-w-5xl mx-auto px-0 md:px-4 mt-0 md:mt-6">
-          <div className="relative w-full overflow-hidden md:rounded-2xl shadow-sm md:shadow-lg border-b md:border border-gray-100 bg-gray-900 flex items-center justify-center">
-            <img
-              src={getPublicImageUrl(post.coverImage)}
-              alt={post.title}
-              className="w-full h-auto max-h-[70vh] lg:max-h-[600px] object-contain transition-transform duration-700 hover:scale-105"
-            />
-            {/* Soft gradient from bottom to make text overlay readable if needed, though here we just have it for style */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-          </div>
-        </div>
-      </div>
-
       {/* Main article wrapper */}
-      <div className="max-w-[720px] mx-auto px-4 md:px-6">
+      <div className="max-w-[760px] mx-auto px-4 md:px-8 py-6 md:py-10 bg-white md:rounded-2xl shadow-sm md:shadow-md border border-gray-100">
         {/* Breadcrumb */}
-        <nav className="flex items-center text-xs text-gray-500 pt-6 pb-3 font-medium">
+        <nav className="flex items-center text-xs text-gray-500 pb-5 font-medium mb-2 border-b border-gray-100">
           <Link href="/" className="hover:text-[#1a4731] transition-colors">
             Beranda
           </Link>
@@ -234,7 +219,7 @@ export default async function BeritaDetailPage({
         </nav>
 
         {/* Categories & Status */}
-        <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="flex flex-wrap items-center gap-2 mb-4 mt-5">
           {post.status !== "PUBLISHED" && (
             <span className="text-[10px] font-bold text-white bg-orange-500 px-2.5 py-1 rounded uppercase tracking-wider">
               {post.status}
@@ -244,7 +229,7 @@ export default async function BeritaDetailPage({
             post.categories.map((catObj: any) => (
               <span
                 key={catObj.category.id}
-                className="text-[10px] font-bold text-white bg-[#1a4731] px-2.5 py-1 rounded uppercase tracking-wider"
+                className="text-[10px] font-bold text-[#1a4731] bg-[#1a4731]/10 px-2.5 py-1 rounded uppercase tracking-wider border border-[#1a4731]/20"
               >
                 {catObj.category.name}
               </span>
@@ -252,19 +237,19 @@ export default async function BeritaDetailPage({
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 font-serif leading-[1.25] mb-5 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-bold text-gray-900 font-serif leading-[1.3] md:leading-[1.25] mb-5 tracking-tight">
           {post.title}
         </h1>
 
         {/* Excerpt / Lead */}
         {post.excerpt && (
-          <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-6 pb-6 border-b border-gray-200 font-medium">
+          <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-6 font-medium">
             {post.excerpt}
           </p>
         )}
 
         {/* Author + Meta */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-3">
             {post.author?.image ? (
               <img
@@ -278,34 +263,40 @@ export default async function BeritaDetailPage({
               </div>
             )}
             <div>
-              <p className="font-bold text-gray-900 text-sm leading-none mb-1">
+              <p className="font-bold text-gray-900 text-sm leading-none mb-1.5">
                 {post.customAuthor || post.author?.name || "Redaksi MCN"}
               </p>
-              <p className="text-xs text-gray-500">Tim Redaksi</p>
+              <div className="flex items-center gap-3 text-xs text-gray-400 font-medium tracking-wide">
+                <span className="flex items-center gap-1.5">
+                  <Clock size={13} className="opacity-70" />
+                  {publishDate.toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}{" "}
+                  {publishDate.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                {post.viewCount > 0 && (
+                  <span className="flex items-center gap-1.5 border-l border-gray-200 pl-3">
+                    <Eye size={13} className="opacity-70" />
+                    {post.viewCount.toLocaleString("id-ID")}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-400 font-medium">
-            <span className="flex items-center gap-1.5">
-              <Clock size={13} />
-              {publishDate.toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}{" "}
-              ·{" "}
-              {publishDate.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              WIB
-            </span>
-            {post.viewCount > 0 && (
-              <span className="flex items-center gap-1.5">
-                <Eye size={13} />
-                {post.viewCount.toLocaleString("id-ID")} tayangan
-              </span>
-            )}
-          </div>
+        </div>
+
+        {/* Modern Professional Hero Image (Below Title & Author) */}
+        <div className="relative w-full mb-8 mt-2 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group aspect-video">
+          <img
+            src={getPublicImageUrl(post.coverImage)}
+            alt={post.title}
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          />
         </div>
 
         {/* ── Article Body ─────────────────────── */}
