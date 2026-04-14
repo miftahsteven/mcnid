@@ -329,7 +329,7 @@ export default async function BeritaDetailPage({
         </div>
 
         {/* Sidebar Banner */}
-        <aside className="w-full lg:w-[320px] shrink-0 px-4 md:px-0 lg:sticky lg:top-24 self-start mb-8 lg:mb-0">
+        <aside className="w-full lg:w-[320px] shrink-0 px-4 md:px-0 lg:sticky lg:top-[200px] self-start mb-8 lg:mb-0 z-10">
           <ZisBanner />
         </aside>
 
