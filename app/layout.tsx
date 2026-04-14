@@ -46,7 +46,7 @@ export default function RootLayout({
       <body>
         {/* Google Analytics - Placed at top of body for early loading without breaking Next.js head management */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-94PR12JYPW"
+          src="https://www.googletagmanager.com/gtag/js?id=G-PL660TV5Z3"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -55,7 +55,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-94PR12JYPW');
+            gtag('config', 'G-PL660TV5Z3');
           `}
         </Script>
         {children}
