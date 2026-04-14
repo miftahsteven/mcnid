@@ -20,22 +20,30 @@ export const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || '';
 export function getPublicImageUrl(path: string | null | undefined): string {
   if (!path) return "/placeholder-news.jpg";
 
-  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.mcnid.net";
+  // Priority for image base URL:
+  // 1. NEXT_PUBLIC_IMAGE_URL (allows pointing to prod images in dev)
+  // 2. NEXT_PUBLIC_API_URL
+  // 3. Fallback to production if non-existent locally or default
+  const imageBaseUrl = process.env.NEXT_PUBLIC_IMAGE_URL || process.env.NEXT_PUBLIC_API_URL || "https://api.mcnid.net";
   
-  // 1. If it's already a full URL pointing to localhost:4000 or http://api.mcnid.net
-  // we normalize it to the official public API URL (which should be HTTPS in production)
-  if (path.includes("localhost:4000") || path.includes("http://api.mcnid.net")) {
-    return path.replace(/http:\/\/localhost:4000/g, publicApiUrl)
-               .replace(/http:\/\/api\.mcnid\.net/g, publicApiUrl);
+  // 1. If it's already a full URL pointing to any localhost or http://api.mcnid.net
+  // we normalize it to our configured image base URL
+  if (path.includes("localhost:") || path.includes("http://api.mcnid.net")) {
+    return path.replace(/http:\/\/localhost:\d+/g, imageBaseUrl)
+               .replace(/http:\/\/api\.mcnid\.net/g, imageBaseUrl);
   }
 
-  // 2. If it's a relative path, prefix it with the public API URL
+  // 2. If it's a relative path, prefix it with the image base URL
   if (!path.startsWith("http")) {
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    return `${publicApiUrl}${cleanPath}`;
+    // Ensure we don't double slash if imageBaseUrl ends with /
+    const baseUrl = imageBaseUrl.endsWith('/') ? imageBaseUrl.slice(0, -1) : imageBaseUrl;
+    return `${baseUrl}${cleanPath}`;
   }
 
   // 3. If it's another absolute URL (S3, external site), return as is
-  // But still try to upgrade to https if it's our domain just in case of edge cases
-  return path.replace("http://api.mcnid.net", "https://api.mcnid.net");
+  // But still try to upgrade to https if it's our domain
+  return path.replace("http://api.mcnid.net", "https://api.mcnid.net")
+             .replace("http://localhost:4000", imageBaseUrl)
+             .replace("http://localhost:4001", imageBaseUrl);
 }
