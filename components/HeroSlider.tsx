@@ -19,7 +19,7 @@ export interface HighlightItem {
   excerpt: string;
   author: string;
   publishedAt: string | null;
-  type: "post" | "video";
+  type: "post" | "video" | "OPINION";
   views: number;
 }
 
@@ -70,7 +70,9 @@ export default function HeroSlider({ highlights }: HeroSliderProps) {
   const currentFocus = highlights[currentIndex];
   // Helper to resolve correct route
   const resolveLink = (item: HighlightItem) => {
-    return item.type === "video" ? `/mcn-play/${item.slug}` : `/berita/${item.slug}`;
+    if (item.type === "video") return `/mcn-play/${item.slug}`;
+    if (item.type === "OPINION") return `/opini/${item.slug}`;
+    return `/berita/${item.slug}`;
   };
 
   return (

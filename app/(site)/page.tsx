@@ -41,18 +41,20 @@ export default async function HomePage() {
   let latestPostsItems: HighlightItem[] = [];
   let latestVideosItems: any[] = [];
   let trending: any[] = [];
+  let opiniItems: any[] = [];
 
   try {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 
-    // Fetch highlights, latest mixed, latest pure posts, latest videos, and trending in parallel
-    const [hlRes, latestRes, lpRes, lvRes, trendRes] = await Promise.all([
+    // Fetch highlights, latest mixed, latest pure posts, latest videos, trending, and opini in parallel
+    const [hlRes, latestRes, lpRes, lvRes, trendRes, opiniRes] = await Promise.all([
       fetch(`${API_URL}/api/highlights`, { next: { revalidate: 5 } }),
       fetch(`${API_URL}/api/latest`, { next: { revalidate: 5 } }),
       fetch(`${API_URL}/api/latest-posts`, { next: { revalidate: 5 } }),
       fetch(`${API_URL}/api/latest-videos`, { next: { revalidate: 5 } }),
-      fetch(`${API_URL}/api/trending`, { next: { revalidate: 5 } })
+      fetch(`${API_URL}/api/trending`, { next: { revalidate: 5 } }),
+      fetch(`${API_URL}/api/posts?type=OPINION&limit=4`, { next: { revalidate: 60 } })
     ]);
 
     if (hlRes.ok) highlights = (await hlRes.json()).data || [];
@@ -60,6 +62,7 @@ export default async function HomePage() {
     if (lpRes.ok) latestPostsItems = (await lpRes.json()).data || [];
     if (lvRes.ok) latestVideosItems = (await lvRes.json()).data || [];
     if (trendRes.ok) trending = (await trendRes.json()).data || [];
+    if (opiniRes.ok) opiniItems = (await opiniRes.json()).data || [];
 
   } catch (err) {
     console.error("Failed to fetch public api data:", err);
@@ -76,7 +79,10 @@ export default async function HomePage() {
   // MCN Play API Logic
   const validVideos = latestVideosItems.length > 0 ? latestVideosItems : videos;
   const featuredVideo = validVideos[0];
-  const videoList = validVideos.slice(1);
+  const videoList = validVideos.slice(1, 5);
+
+  // Use real opini data or fallback to dummy
+  const finalOpini = opiniItems.length > 0 ? opiniItems : opinArticles;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -95,7 +101,11 @@ export default async function HomePage() {
               return (
                 <Link
                   key={article.id}
-                  href={article.type === "video" ? `/mcn-play/${article.slug}` : `/berita/${article.slug}`}
+                  href={
+                    article.type === "video"
+                      ? `/mcn-play/${article.slug}`
+                      : (article.type === "OPINION" ? `/opini/${article.slug}` : `/berita/${article.slug}`)
+                  }
                   className="group flex gap-3 flex-1 bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-[#1a4731]/30 hover:shadow-md transition-all duration-200"
                 >
                   <div className="w-24 md:w-32 flex-shrink-0 relative overflow-hidden">
@@ -162,7 +172,7 @@ export default async function HomePage() {
                 return (
                   <Link
                     key={article.id}
-                    href={`/berita/${article.slug}`}
+                    href={article.type === "OPINION" ? `/opini/${article.slug}` : `/berita/${article.slug}`}
                     className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-[#1a4731]/30 card-hover hover:shadow-lg transition-all flex flex-col"
                   >
                     <div className="aspect-[16/10] overflow-hidden relative">
@@ -397,48 +407,59 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-          {opinArticles.map((art) => (
-            <Link
-              key={art.id}
-              href={`/opini/${art.slug}`}
-              className="group bg-white rounded-xl overflow-hidden border border-gray-100 card-hover hover:border-[#4a2c82]/30"
-            >
-              <div className="aspect-[16/10] overflow-hidden">
-                <img
-                  src={art.image}
-                  alt={art.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
-                />
-              </div>
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-2">
+          {finalOpini.map((art) => {
+            const artImage = art.image || getPublicImageUrl(art.coverImage);
+            const authorName = art.author?.name || art.author || "Redaksi MCN";
+            const authorImg = art.authorImage || getPublicImageUrl(art.author?.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=random`;
+
+            return (
+              <Link
+                key={art.id}
+                href={`/opini/${art.slug}`}
+                className="group bg-white rounded-xl overflow-hidden border border-gray-100 card-hover hover:border-[#4a2c82]/30"
+              >
+                <div className="aspect-[16/10] overflow-hidden">
                   <img
-                    src={art.authorImage}
-                    alt={art.author}
-                    className="w-6 h-6 rounded-full"
+                    src={artImage}
+                    alt={art.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
                   />
-                  <span className="text-xs text-gray-500 font-medium">
-                    {art.author}
-                  </span>
                 </div>
-                <h3 className="text-gray-900 font-bold text-sm leading-snug line-clamp-3 group-hover:text-[#4a2c82] transition-colors font-serif">
-                  {art.title}
-                </h3>
-                <div className="flex items-center gap-2 mt-3 text-xs text-gray-400">
-                  <span className="flex items-center gap-1">
-                    <BookOpen size={11} />
-                    {art.readingTime} min baca
-                  </span>
-                  {art.views > 0 && (
-                    <span className="flex items-center gap-1">
-                      <Eye size={11} />
-                      {formatNumber(art.views)}
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    {/* <img
+                      src={authorImg}
+                      alt={authorName}
+                      className="w-6 h-6 rounded-full object-cover"
+                    /> */}
+                    <span className="text-xs text-gray-500 font-medium">
+                      {authorName}
                     </span>
+                  </div>
+                  <h3 className="text-gray-900 font-bold text-sm leading-snug line-clamp-2 group-hover:text-[#4a2c82] transition-colors font-serif mb-2">
+                    {art.title}
+                  </h3>
+                  {art.excerpt && (
+                    <p className="text-gray-500 text-[11px] leading-relaxed line-clamp-2 mb-4">
+                      {art.excerpt}
+                    </p>
                   )}
-                </div>
-              </div>
-            </Link>
-          ))}
+                  <div className="flex items-center gap-2 mt-auto text-xs text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <BookOpen size={11} />
+                      {art.readingTime || 5} min baca
+                    </span>
+                    {(art.views > 0 || art.viewCount > 0) && (
+                      <span className="flex items-center gap-1">
+                        <Eye size={11} />
+                        {formatNumber(art.views || art.viewCount || 0)}
+                      </span>
+                    )}
+                  </div>
+                 </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BookOpen, Eye, Clock, Share2 } from 'lucide-react';
 import { opinArticles, formatDate, formatNumber } from '@/lib/dummy-data';
+import { getPublicImageUrl } from '@/lib/backend-config';
 
 export const metadata: Metadata = {
   title: 'Opini | MCNID.NET',
@@ -27,10 +28,85 @@ export const metadata: Metadata = {
   },
 };
 
+// --- Types ---
+interface OpiniPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  coverImage: string | null;
+  publishedAt: string | null;
+  viewCount: number;
+  customAuthor: string | null;
+  author: { name: string; image: string | null };
+  categories: { category: { name: string; slug: string } }[];
+}
 
-export default function OpiniPage() {
-  const featured = opinArticles[0];
-  const rest = opinArticles.slice(1);
+// Shape yang dipakai UI — sama dengan Article di dummy-data
+interface OpiniArticle {
+  id: string | number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  author: string;
+  authorRole: string;
+  authorImage: string;
+  publishedAt: string;
+  readingTime: number;
+  views: number;
+}
+
+// --- Fetch dari backend ---
+async function fetchOpiniPosts(): Promise<OpiniArticle[]> {
+  const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/posts?type=opinion`, {
+      next: { revalidate: 60 }, // ISR: revalidate setiap 60 detik
+    });
+
+    if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+
+    const json = await res.json();
+    const posts: OpiniPost[] = json.data ?? [];
+
+    if (posts.length === 0) return [];
+
+    return posts.map((p) => {
+      const authorName = p.customAuthor || p.author.name;
+      const authorImage =
+        p.author.image
+          ? getPublicImageUrl(p.author.image)
+          : `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=4a2c82&color=fff`;
+
+      return {
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt ?? '',
+        image: p.coverImage ? getPublicImageUrl(p.coverImage) : '/placeholder-news.jpg',
+        author: authorName,
+        authorRole: p.categories[0]?.category.name ?? 'Penulis',
+        authorImage,
+        publishedAt: p.publishedAt ?? new Date().toISOString(),
+        readingTime: 5, // tidak ada di schema, gunakan default
+        views: p.viewCount,
+      };
+    });
+  } catch (err) {
+    console.warn('[OpiniPage] Gagal fetch dari backend, pakai dummy data:', err);
+    return [];
+  }
+}
+
+export default async function OpiniPage() {
+  // Ambil data dari backend; fallback ke dummy jika kosong / error
+  const backendArticles = await fetchOpiniPosts();
+  const articles: OpiniArticle[] = backendArticles.length > 0 ? backendArticles : opinArticles;
+
+  const featured = articles[0];
+  const rest = articles.slice(1);
 
   return (
     <div className="bg-gray-50 min-h-screen">
