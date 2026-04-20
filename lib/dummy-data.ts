@@ -585,8 +585,10 @@ export function formatNumber(n: number): string {
 }
 
 // Utility: Format date
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '-';
   const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '-';
   return d.toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
