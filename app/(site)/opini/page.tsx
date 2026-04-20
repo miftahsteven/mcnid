@@ -62,7 +62,7 @@ async function fetchOpiniPosts(): Promise<OpiniArticle[]> {
   const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/posts?type=opinion`, {
+    const res = await fetch(`${BACKEND_URL}/api/posts?type=OPINION`, {
       next: { revalidate: 60 }, // ISR: revalidate setiap 60 detik
     });
 
@@ -96,17 +96,34 @@ async function fetchOpiniPosts(): Promise<OpiniArticle[]> {
     });
   } catch (err) {
     console.warn('[OpiniPage] Gagal fetch dari backend, pakai dummy data:', err);
-    return [];
+    return opinArticles as unknown as OpiniArticle[];
   }
 }
 
 export default async function OpiniPage() {
   // Ambil data dari backend; fallback ke dummy jika kosong / error
   const backendArticles = await fetchOpiniPosts();
-  const articles: OpiniArticle[] = backendArticles.length > 0 ? backendArticles : opinArticles;
+  const articles: OpiniArticle[] = backendArticles.length > 0 ? backendArticles : (opinArticles as unknown as OpiniArticle[]);
 
   const featured = articles[0];
   const rest = articles.slice(1);
+
+  // Guard: jika articles benar-benar kosong, tampilkan empty state
+  if (!featured) {
+    return (
+      <div className="bg-gray-50 min-h-screen">
+        <div className="bg-gradient-to-r from-[#311c58] to-[#4a2c82] py-10">
+          <div className="max-w-7xl mx-auto px-4">
+            <h1 className="text-white font-bold text-3xl font-serif">Opini</h1>
+            <p className="text-gray-200 text-sm mt-2">Perspektif dan gagasan dari ulama, akademisi, dan tokoh Islam Indonesia</p>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+          <p className="text-gray-400 text-lg">Belum ada article opini yang tersedia.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
