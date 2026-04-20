@@ -578,7 +578,8 @@ export const breakingNews = [
 ];
 
 // Utility: Format number
-export function formatNumber(n: number): string {
+export function formatNumber(n: number | null | undefined): string {
+  if (n == null || isNaN(n)) return '0';
   if (n >= 1000000) return (n / 1000000).toFixed(1) + "jt";
   if (n >= 1000) return (n / 1000).toFixed(1) + "rb";
   return n.toString();
