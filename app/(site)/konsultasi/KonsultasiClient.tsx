@@ -289,7 +289,7 @@ export default function KonsultasiClient() {
           </svg> Masuk dengan Google
         </button>
         <button
-          onClick={() => window.open('https://wa.me/6285121388844?text=Assalamu%27alaikum%20saya%20mau%20tanya%20ki..', '_blank')}
+          onClick={() => window.open('https://wa.me/628558876544?text=Assalamu%27alaikum%20saya%20mau%20tanya%20ki..', '_blank')}
           className="w-full bg-[#25d366] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 hover:bg-[#22c35e] transition-all shadow-md mt-3"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
