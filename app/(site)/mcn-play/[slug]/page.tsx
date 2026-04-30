@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "@/components/ViewTracker";
+import JsonLd from "@/components/seo/JsonLd";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "mcn_secret_2026_dev";
@@ -175,13 +176,36 @@ export default async function MCNPlayDetailPage({
     inLanguage: "id-ID",
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://mcnid.net"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "MCN Play",
+        "item": "https://mcnid.net/mcn-play"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": video.title,
+        "item": `https://mcnid.net/mcn-play/${video.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="bg-[#0b1912] min-h-screen pb-16 text-gray-200">
       {/* JSON-LD for Google Rich Results */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       {/* Silent view tracker */}
       <ViewTracker type="video" slug={video.slug} />
 

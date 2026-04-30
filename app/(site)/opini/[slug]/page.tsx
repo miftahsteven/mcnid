@@ -8,6 +8,7 @@ import ViewTracker from "@/components/ViewTracker";
 import ZisBanner from "@/components/ZisBanner";
 import { getPublicImageUrl } from "@/lib/backend-config";
 import * as jose from "jose";
+import JsonLd from "@/components/seo/JsonLd";
 
 // Server-side: use BACKEND_URL for internal SSR fetching
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
@@ -167,9 +168,35 @@ export default async function OpiniDetailPage({
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://mcnid.net/opini/${post.slug}` },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://mcnid.net"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Opini",
+        "item": "https://mcnid.net/opini"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://mcnid.net/opini/${post.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen pt-0 md:pt-6 pb-12">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ViewTracker type="post" slug={post.slug} />
 
       <div className="max-w-[1100px] mx-auto flex flex-col lg:flex-row lg:items-start lg:justify-center px-0 md:px-4 gap-6">

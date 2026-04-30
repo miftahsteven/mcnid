@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "@/components/ViewTracker";
 import ZisBanner from "@/components/ZisBanner";
+import JsonLd from "@/components/seo/JsonLd";
 
 // Server-side: use BACKEND_URL for internal SSR fetching (correct port on production)
 const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -192,13 +193,36 @@ export default async function BeritaDetailPage({
     },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Beranda",
+        "item": "https://mcnid.net"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Berita",
+        "item": "https://mcnid.net/berita"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://mcnid.net/berita/${post.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen pt-0 md:pt-6 pb-12">
       {/* JSON-LD for Google Rich Results */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ViewTracker type="post" slug={post.slug} />
 
       {/* Layout Wrapper for Article & Sidebar */}
