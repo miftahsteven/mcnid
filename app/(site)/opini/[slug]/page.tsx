@@ -28,7 +28,7 @@ async function getPost(slug: string) {
       try {
         const res = await fetch(url, {
           headers: { "x-api-key": INTERNAL_API_KEY },
-          cache: "no-store",
+          next: { revalidate: 60 },
         });
         if (res.ok) {
           const json = await res.json();
@@ -41,7 +41,7 @@ async function getPost(slug: string) {
 
     // Fallback: Deep extraction for posts that might not be found by slug route immediately
     try {
-      const listRes = await fetch(`${PUBLIC_API_URL}/api/posts?type=OPINION`, { cache: "no-store" });
+      const listRes = await fetch(`${PUBLIC_API_URL}/api/posts?type=OPINION`, { next: { revalidate: 60 } });
       if (listRes.ok) {
         const listJson = await listRes.json();
         const target = listJson.data?.find((p: any) => p.slug === slug);
@@ -56,7 +56,7 @@ async function getPost(slug: string) {
           
           const adminRes = await fetch(`${PUBLIC_API_URL}/api/posts/admin/${target.id}`, {
             headers: { "Authorization": `Bearer ${adminToken}` },
-            cache: "no-store"
+            next: { revalidate: 60 }
           });
           if (adminRes.ok) {
             const adminJson = await adminRes.json();

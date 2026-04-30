@@ -22,7 +22,7 @@ async function getVideo(slug: string) {
   try {
     const res = await fetch(`${API_URL}/api/videos/${slug}`, {
       headers: { "x-api-key": INTERNAL_API_KEY },
-      cache: "no-store",
+      next: { revalidate: 60 },
     });
     if (!res.ok) return null;
     const json = await res.json();
