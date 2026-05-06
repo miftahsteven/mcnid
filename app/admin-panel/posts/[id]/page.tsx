@@ -39,6 +39,7 @@ export default function EditPostPage() {
     tags: "",
     featuredImage: "",
     slug: "",
+    subContent: "Nasional",
   });
 
   const [scheduleType, setScheduleType] = useState("now");
@@ -116,6 +117,7 @@ export default function EditPostPage() {
                 .join(", ") || "",
             featuredImage: post.coverImage || "",
             slug: post.slug || "",
+            subContent: post.subContent || "Nasional",
           });
           if (post.publishedAt) {
             const d = new Date(post.publishedAt);
@@ -220,6 +222,7 @@ export default function EditPostPage() {
           .map((t) => t.trim())
           .filter(Boolean),
         categoryId: form.categoryId || undefined,
+        subContent: form.subContent,
         publishedAt,
       };
 
@@ -430,6 +433,25 @@ export default function EditPostPage() {
                 <option value="NEWS">Berita</option>
                 <option value="OPINION">Opini</option>
                 <option value="ARTICLE">Artikel</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 block mb-1">
+                Sub Konten
+              </label>
+              <select
+                value={form.subContent}
+                onChange={(e) => handleChange("subContent", e.target.value)}
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1a4731]"
+              >
+                <option value="Nasional">Nasional</option>
+                <option value="Keislaman">Keislaman</option>
+                <option value="Tokoh">Tokoh</option>
+                <option value="Internasional">Internasional</option>
+                <option value="Ekonomi">Ekonomi</option>
+                <option value="Pendidikan">Pendidikan</option>
+                <option value="Sosial">Sosial</option>
+                <option value="Hukum">Hukum</option>
               </select>
             </div>
             <div>

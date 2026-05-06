@@ -12,7 +12,7 @@ dayjs.locale("id");
 import { getPublicImageUrl } from "@/lib/backend-config";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const categories = ["Semua", "Nasional", "Keislaman", "Kegiatan", "Tokoh", "MCN Play"];
+const categories = ["Semua", "Nasional", "Keislaman", "Tokoh", "Internasional", "Ekonomi", "Pendidikan", "Sosial", "Hukum", "MCN Play"];
 
 interface IndeksItem {
   id: string;
