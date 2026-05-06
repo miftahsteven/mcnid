@@ -35,6 +35,7 @@ interface Post {
   title: string;
   slug: string;
   type: string;
+  subContent: string;
   status: string;
   coverImage: string | null;
   publishedAt: string | null;
@@ -303,6 +304,9 @@ export default function PostsPage() {
                   <th className="hidden sm:table-cell text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Tipe & Kategori
                   </th>
+                  <th className="hidden lg:table-cell text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Sub Kontent
+                  </th>
                   {/* <th className="hidden sm:table-cell text-left px-3 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Tag
                   </th> */}
@@ -337,7 +341,7 @@ export default function PostsPage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 text-sm line-clamp-2 max-w-sm">
+                          <p className="font-semibold text-gray-900 text-sm line-clamp-1 max-w-[200px] lg:max-w-xs xl:max-w-sm truncate">
                             {post.title}
                           </p>
                           {/* <p className="text-xs text-gray-400 mt-0.5">
@@ -347,13 +351,13 @@ export default function PostsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="hidden md:table-cell px-3 py-3 text-xs text-gray-600">
+                    <td className="hidden md:table-cell px-3 py-3 text-xs text-gray-600 whitespace-nowrap">
                       {post.author.name}
                     </td>
                     <td className="hidden sm:table-cell px-3 py-3">
                       <div className="flex flex-wrap gap-1">
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap ${
                             post.type?.toUpperCase() === "HIGHLIGHT"
                               ? "bg-purple-100 text-purple-700"
                               : post.type?.toUpperCase() === "NEWS"
@@ -365,15 +369,18 @@ export default function PostsPage() {
                         >
                           {post.type?.toUpperCase() || "BERITA"}
                         </span>
-                        {post.categories.map((c) => (
+                        {post.categories.slice(0, 1).map((c) => (
                           <span
                             key={c.category.name}
-                            className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
+                            className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full whitespace-nowrap"
                           >
                             {c.category.name}
                           </span>
                         ))}
                       </div>
+                    </td>
+                    <td className="hidden lg:table-cell px-3 py-3 text-xs text-gray-600 whitespace-nowrap">
+                      {post.subContent || "Nasional"}
                     </td>
                     {/* <td className="hidden sm:table-cell px-3 py-3">
                       <div className="flex flex-wrap gap-1">
@@ -387,14 +394,14 @@ export default function PostsPage() {
                         ))}
                       </div>
                     </td> */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3 whitespace-nowrap">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full capitalize ${statusColors[post.status] || "bg-gray-100 text-gray-600"}`}
                       >
                         {post.status.toLowerCase()}
                       </span>
                     </td>
-                    <td className="hidden md:table-cell px-3 py-3 text-xs text-gray-400">
+                    <td className="hidden md:table-cell px-3 py-3 text-xs text-gray-400 whitespace-nowrap">
                       {formatDate(post.publishedAt || post.createdAt)}
                     </td>
                     <td className="px-3 py-3 pr-5">
