@@ -104,7 +104,7 @@ export default function PostsPage() {
       return;
     try {
       setIsScraping(true);
-      const res = await fetch("/api/admin/scraper/run", { 
+      const res = await fetch("/api/admin/scraper/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: keyword })
@@ -357,15 +357,14 @@ export default function PostsPage() {
                     <td className="hidden sm:table-cell px-3 py-3">
                       <div className="flex flex-wrap gap-1">
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap ${
-                            post.type?.toUpperCase() === "HIGHLIGHT"
-                              ? "bg-purple-100 text-purple-700"
-                              : post.type?.toUpperCase() === "NEWS"
-                                ? "bg-blue-100 text-blue-700"
-                                : post.type?.toUpperCase() === "OPINION"
-                                  ? "bg-orange-100 text-orange-700"
-                                  : "bg-indigo-100 text-indigo-700"
-                          }`}
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase whitespace-nowrap ${post.type?.toUpperCase() === "HIGHLIGHT"
+                            ? "bg-purple-100 text-purple-700"
+                            : post.type?.toUpperCase() === "NEWS"
+                              ? "bg-blue-100 text-blue-700"
+                              : post.type?.toUpperCase() === "OPINION"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-indigo-100 text-indigo-700"
+                            }`}
                         >
                           {post.type?.toUpperCase() || "BERITA"}
                         </span>
@@ -380,7 +379,9 @@ export default function PostsPage() {
                       </div>
                     </td>
                     <td className="hidden lg:table-cell px-3 py-3 text-xs text-gray-600 whitespace-nowrap">
-                      {post.subContent || "Nasional"}
+                      <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
+                        {post.subContent || "Nasional"}
+                      </span>
                     </td>
                     {/* <td className="hidden sm:table-cell px-3 py-3">
                       <div className="flex flex-wrap gap-1">
@@ -509,11 +510,10 @@ export default function PostsPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page as number)}
-                        className={`min-w-[32px] h-8 rounded-lg text-xs font-semibold transition-all ${
-                          currentPage === page
-                            ? "bg-[#1a4731] text-white"
-                            : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
-                        }`}
+                        className={`min-w-[32px] h-8 rounded-lg text-xs font-semibold transition-all ${currentPage === page
+                          ? "bg-[#1a4731] text-white"
+                          : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                          }`}
                       >
                         {page}
                       </button>
