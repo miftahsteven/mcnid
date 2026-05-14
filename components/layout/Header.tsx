@@ -43,13 +43,11 @@ export default function Header() {
   useEffect(() => {
     const fetchPrayerTimes = async () => {
       try {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
+        // Fetch from our internal proxy to avoid CORS/client-side network issues
+        const res = await fetch('/api/prayer-times');
         
-        // Jakarta city ID for MyQuran API is 1301
-        const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${year}/${month}/${day}`);
+        if (!res.ok) throw new Error('Network response was not ok');
+        
         const json = await res.json();
         
         if (json.status && json.data && json.data.jadwal) {
@@ -68,6 +66,7 @@ export default function Header() {
         }
       } catch (error) {
         console.error("Failed to fetch prayer times:", error);
+        // Fallback to empty or previous state if needed
       }
     };
     
