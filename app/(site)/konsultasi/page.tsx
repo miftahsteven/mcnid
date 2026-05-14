@@ -26,5 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default function KonsultasiPage() {
-  return <KonsultasiClient />;
+  const whatsappStatus = process.env.NEXT_PUBLIC_WHATSAPP_KONSULTASI_BUTTON || 'disactive';
+  
+  return <KonsultasiClient whatsappStatus={whatsappStatus} />;
 }

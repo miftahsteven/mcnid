@@ -32,7 +32,11 @@ const suggestedQuestions = [
   'Apa hukum investasi saham di bursa efek menurut Islam?',
 ];
 
-export default function KonsultasiClient() {
+interface KonsultasiClientProps {
+  whatsappStatus: string;
+}
+
+export default function KonsultasiClient({ whatsappStatus }: KonsultasiClientProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 0,
@@ -318,7 +322,7 @@ export default function KonsultasiClient() {
             <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.67 15.63 16.86 16.81 15.69 17.59V20.34H19.26C21.36 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4" /><path d="M12 23C14.97 23 17.46 22.02 19.26 20.34L15.69 17.59C14.71 18.25 13.46 18.66 12 18.66C9.17 18.66 6.78 16.75 5.86 14.18H2.18V17.03C4.01 20.65 7.7 23 12 23Z" fill="#34A853" /><path d="M5.86 14.18C5.62 13.46 5.49 12.7 5.49 11.91C5.49 11.12 5.62 10.36 5.86 9.64V6.79H2.18C1.43 8.28 1 9.98 1 11.91C1 13.84 1.43 15.54 2.18 17.03L5.86 14.18Z" fill="#FBBC05" /><path d="M12 5.16C13.62 5.16 15.08 5.71 16.22 6.8L19.34 3.68C17.46 1.93 14.97 1 12 1C7.7 1 4.01 3.35 2.18 6.79L5.86 9.64C6.78 7.07 9.17 5.16 12 5.16Z" fill="#EA4335" />
           </svg> Masuk dengan Google
         </button>
-        {process.env.NEXT_PUBLIC_WHATSAPP_KONSULTASI_BUTTON === 'active' && (
+        {whatsappStatus === 'active' && (
           <button
             onClick={() => window.open('https://wa.me/628558876544?text=Assalamu%27alaikum%20saya%20mau%20tanya%20ki..', '_blank')}
             className="w-full bg-[#25d366] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 hover:bg-[#22c35e] transition-all shadow-md mt-3"
