@@ -191,36 +191,47 @@ export default async function HomePage() {
                   <Link
                     key={article.id}
                     href={article.type === "OPINION" ? `/opini/${article.slug}` : `/berita/${article.slug}`}
-                    className="group flex flex-col w-full bg-transparent transition-all duration-300"
+                    className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-[#1a4731]/30 card-hover hover:shadow-lg transition-all flex flex-col"
                   >
-                    <div className="aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 relative mb-3">
+                    <div className="aspect-[16/10] overflow-hidden relative">
                       <img
                         src={imageUrl}
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                    </div>
-                    <div className="flex flex-col flex-1">
-                      <span className={`text-[11px] sm:text-xs font-semibold ${getCategoryTextColor(article.category)}`}>
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      <span
+                        className={`absolute bottom-3 left-3 badge-primary text-[10px] shadow-sm ${getCategoryColor(article.category)}`}
+                      >
                         {article.category}
                       </span>
+                    </div>
+                    <div className="pt-5 pb-5 pl-5 pr-3 flex flex-col flex-1 justify-between">
                       <h3
                         title={article.title}
-                        className="text-neutral-800 font-medium sm:font-semibold text-[13.5px] sm:text-[14.5px] leading-snug group-hover:text-[#1a4731] transition-colors font-sans mt-0.5"
+                        className="text-neutral-800 font-medium sm:font-semibold text-[13.5px] sm:text-[14.5px] leading-snug group-hover:text-[#1a4731] transition-colors font-sans"
                       >
                         {article.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-gray-400 text-[10px] sm:text-[11px] mt-1 font-medium">
-                        <span>{formatDate(article.publishedAt || "")}</span>
-                        {article.views > 0 && (
-                          <>
-                            <span>•</span>
-                            <span className="flex items-center gap-0.5">
-                              <Eye size={10} />
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                            <span className="text-[10px] font-bold text-gray-500">{article.author.charAt(0).toUpperCase()}</span>
+                          </div>
+                          <span className="text-xs font-medium text-gray-700 truncate max-w-[100px]">{article.author}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[10px] font-medium text-gray-400">
+                          {article.views > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Eye size={12} className="text-gray-400" />
                               {formatNumber(article.views)}
                             </span>
-                          </>
-                        )}
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Clock size={12} className="text-gray-400" />
+                            {formatDate(article.publishedAt || "")}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </Link>
