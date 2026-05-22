@@ -35,6 +35,18 @@ function getCategoryColor(cat: string) {
   return map[cat] || "bg-[#1a4731]";
 }
 
+// Helper: Category text color (detik style)
+function getCategoryTextColor(cat: string) {
+  const map: Record<string, string> = {
+    Nasional: "text-blue-600",
+    Keislaman: "text-green-700",
+    Kegiatan: "text-orange-600",
+    Tokoh: "text-purple-600",
+    Opini: "text-gray-700",
+  };
+  return map[cat] || "text-[#1a4731]";
+}
+
 export default async function HomePage() {
   let highlights: HighlightItem[] = [];
   let latestItems: HighlightItem[] = [];
@@ -108,25 +120,31 @@ export default async function HomePage() {
                   }
                   className="group flex gap-3 flex-1 bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-[#1a4731]/30 hover:shadow-md transition-all duration-200"
                 >
-                  <div className="w-24 md:w-32 flex-shrink-0 relative overflow-hidden">
+                  <div className="w-24 md:w-28 flex-shrink-0 relative overflow-hidden">
                     <img
                       src={imageUrl}
                       alt={article.title}
                       className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-300"
                     />
+                    {/* Absolutely positioned category badge on the image */}
+                    <div className="absolute top-2 left-2 z-10">
+                      <span
+                        className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shadow-sm text-white ${getCategoryColor(article.category)}`}
+                      >
+                        {article.category}
+                      </span>
+                    </div>
                     {article.type === "video" && (
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-10">
                         <Play size={16} fill="currentColor" className="text-white" />
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 py-1.5 pr-3 flex flex-col justify-center">
-                    <span
-                      className={`badge-primary text-[9px] w-fit ${getCategoryColor(article.category)}`}
+                  <div className="flex-1 py-2 pr-3 flex flex-col justify-center">
+                    <h3
+                      title={article.title}
+                      className="text-gray-800 text-xs md:text-[13px] font-semibold leading-snug group-hover:text-[#1a4731] transition-colors font-serif"
                     >
-                      {article.category}
-                    </span>
-                    <h3 className="text-gray-800 text-sm font-semibold leading-tight mt-1 line-clamp-2 group-hover:text-[#1a4731] transition-colors font-serif">
                       {article.title}
                     </h3>
                     <div className="flex items-center gap-3 text-gray-400 text-[10px] mt-1.5">
@@ -173,47 +191,36 @@ export default async function HomePage() {
                   <Link
                     key={article.id}
                     href={article.type === "OPINION" ? `/opini/${article.slug}` : `/berita/${article.slug}`}
-                    className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-[#1a4731]/30 card-hover hover:shadow-lg transition-all flex flex-col"
+                    className="group flex flex-col w-full bg-transparent transition-all duration-300"
                   >
-                    <div className="aspect-[16/10] overflow-hidden relative">
+                    <div className="aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 relative mb-3">
                       <img
                         src={imageUrl}
                         alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
                       />
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"></div>
-                      <span
-                        className={`absolute bottom-3 left-3 badge-primary text-[10px] shadow-sm ${getCategoryColor(article.category)}`}
-                      >
+                    </div>
+                    <div className="flex flex-col flex-1">
+                      <span className={`text-[11px] sm:text-xs font-semibold ${getCategoryTextColor(article.category)}`}>
                         {article.category}
                       </span>
-                    </div>
-                    <div className="p-5 flex flex-col flex-1">
-                      <h3 className="text-gray-900 font-bold text-base leading-snug line-clamp-2 group-hover:text-[#1a4731] transition-colors font-serif">
+                      <h3
+                        title={article.title}
+                        className="text-neutral-800 font-medium sm:font-semibold text-[13.5px] sm:text-[14.5px] leading-snug group-hover:text-[#1a4731] transition-colors font-sans mt-0.5"
+                      >
                         {article.title}
                       </h3>
-                      <p className="text-gray-500 text-sm mt-2 line-clamp-2 flex-1">
-                        {article.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-                            <span className="text-[10px] font-bold text-gray-500">{article.author.charAt(0).toUpperCase()}</span>
-                          </div>
-                          <span className="text-xs font-medium text-gray-700 truncate max-w-[100px]">{article.author}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-[10px] font-medium text-gray-400">
-                          {article.views > 0 && (
-                            <span className="flex items-center gap-1">
-                              <Eye size={12} className="text-gray-400" />
+                      <div className="flex items-center gap-2 text-gray-400 text-[10px] sm:text-[11px] mt-1 font-medium">
+                        <span>{formatDate(article.publishedAt || "")}</span>
+                        {article.views > 0 && (
+                          <>
+                            <span>•</span>
+                            <span className="flex items-center gap-0.5">
+                              <Eye size={10} />
                               {formatNumber(article.views)}
                             </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            <Clock size={12} className="text-gray-400" />
-                            {formatDate(article.publishedAt || "")}
-                          </span>
-                        </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </Link>
@@ -240,7 +247,10 @@ export default async function HomePage() {
                       {idx + 1}
                     </span>
                     <div className="flex-1">
-                      <h4 className="text-gray-800 text-xs font-semibold line-clamp-3 group-hover:text-[#1a4731] transition-colors leading-snug">
+                      <h4
+                        title={art.title}
+                        className="text-gray-800 text-xs font-semibold line-clamp-3 group-hover:text-[#1a4731] transition-colors leading-snug"
+                      >
                         {art.title}
                       </h4>
                       <p className="text-gray-400 text-xs mt-1 flex items-center gap-1">
@@ -456,7 +466,7 @@ export default async function HomePage() {
                       </span>
                     )}
                   </div>
-                 </div>
+                </div>
               </Link>
             );
           })}

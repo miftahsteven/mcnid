@@ -61,7 +61,7 @@ export default function HeroSlider({ highlights }: HeroSliderProps) {
 
   if (!highlights || highlights.length === 0) {
     return (
-      <div className="w-full aspect-[16/9] bg-gray-100 rounded-xl flex items-center justify-center border border-gray-200 shadow-inner">
+      <div className="w-full aspect-[4/3] sm:aspect-[16/9] bg-gray-100 rounded-xl flex items-center justify-center border border-gray-200 shadow-inner">
         <p className="text-gray-400 font-medium">Tidak ada berita utama.</p>
       </div>
     );
@@ -76,7 +76,7 @@ export default function HeroSlider({ highlights }: HeroSliderProps) {
   };
 
   return (
-    <div className="relative group block overflow-hidden rounded-xl bg-gray-900 aspect-[16/9] shadow-lg w-full">
+    <div className="relative group block overflow-hidden rounded-xl bg-gray-900 aspect-[4/3] sm:aspect-[16/9] shadow-lg w-full">
       {/* Slides Container */}
       <div 
         className="w-full h-full flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
@@ -90,20 +90,20 @@ export default function HeroSlider({ highlights }: HeroSliderProps) {
                 alt={hero.title}
                 className="w-full h-full object-cover opacity-80"
               />
-              <div className="news-gradient absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+              <div className="news-gradient absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8">
                 <span
-                  className={`badge-primary mb-3 self-start ${getCategoryColor(hero.category)} flex items-center gap-1`}
+                  className={`badge-primary mb-2.5 self-start ${getCategoryColor(hero.category)} flex items-center gap-1`}
                 >
                   {hero.type === "video" && <Play size={10} fill="currentColor" />}
                   {hero.category}
                 </span>
-                <h1 className="text-white font-bold text-xl md:text-3xl lg:text-4xl leading-tight hover:underline underline-offset-4 transition-all font-serif line-clamp-2 md:line-clamp-3 w-11/12 drop-shadow-md">
+                <h1 className="text-white font-bold text-base sm:text-2xl md:text-3xl lg:text-4xl leading-tight hover:underline underline-offset-4 transition-all font-serif w-11/12 drop-shadow-md">
                   {hero.title}
                 </h1>
                 <p className="text-gray-200 text-sm mt-3 line-clamp-2 hidden md:block w-10/12 drop-shadow">
                   {hero.excerpt}
                 </p>
-                <div className="flex items-center gap-4 mt-4 text-xs text-gray-300 drop-shadow">
+                <div className="flex items-center gap-4 mt-3 sm:mt-4 text-xs text-gray-300 drop-shadow">
                   <span className="font-semibold text-white">{hero.author}</span>
                   <span className="flex items-center gap-1.5 opacity-80">
                     <Clock size={12} />
