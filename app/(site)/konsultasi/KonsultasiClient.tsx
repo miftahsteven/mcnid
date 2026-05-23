@@ -112,7 +112,7 @@ export default function KonsultasiClient({ whatsappStatus }: KonsultasiClientPro
         if (sessions.length > 0 && messages.length <= 1) {
           const storedId = localStorage.getItem('ki_ai_active_session');
           const latestSession = sessions[0];
-          
+
           if (storedId) {
             const found = sessions.find((s: any) => s.sessionId === storedId);
             if (found) {
@@ -324,7 +324,7 @@ export default function KonsultasiClient({ whatsappStatus }: KonsultasiClientPro
         </button>
         {whatsappStatus === 'active' && (
           <button
-            onClick={() => window.open('https://wa.me/628558876544?text=Assalamu%27alaikum%20saya%20mau%20tanya%20ki..', '_blank')}
+            onClick={() => window.open('https://wa.me/628212371304?text=Assalamu%27alaikum%20saya%20mau%20tanya%20ki..', '_blank')}
             className="w-full bg-[#25d366] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-3 hover:bg-[#22c35e] transition-all shadow-md mt-3"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
